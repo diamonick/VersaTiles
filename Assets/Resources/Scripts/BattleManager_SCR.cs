@@ -17,7 +17,9 @@ public class BattleManager_SCR : MonoBehaviour
         CalculateTileSequence,
         GoToEnemyTurn,
         GoToPlayerTurn,
-        BattleWon
+        BattleWon,
+        IntroduceBoss,
+        LevelCleared
     }
 
     public enum Mode
@@ -42,7 +44,12 @@ public class BattleManager_SCR : MonoBehaviour
 
     public enum Enemy
     {
-        EyeDye1 = 0,
+        Froopa = 0,
+        Nutbug,
+        Reshroom,
+        Apple,
+        Snapple,
+        EyeDye1,
         EyeDye2,
         EyeDye3,
         EyeDye4,
@@ -63,16 +70,13 @@ public class BattleManager_SCR : MonoBehaviour
 
     private readonly List<List<Enemy>> World1_1_Waves = new List<List<Enemy>>()
     {
-        new List<Enemy> { Enemy.EyeDye1, Enemy.EyeDye1, Enemy.EyeDye1 },
-        new List<Enemy> { Enemy.EyeDye4, Enemy.EyeDye5, Enemy.EyeDye3 },
-        new List<Enemy> { Enemy.EyeDye4, Enemy.EyeDye5, Enemy.EyeDye3 },
-        new List<Enemy> { Enemy.EyeDye4, Enemy.EyeDye5, Enemy.EyeDye3 },
-        new List<Enemy> { Enemy.EyeDye4, Enemy.EyeDye5, Enemy.EyeDye3 },
-        new List<Enemy> { Enemy.EyeDye1, Enemy.EyeDye1, Enemy.EyeDye1 },
-        new List<Enemy> { Enemy.EyeDye4, Enemy.EyeDye5, Enemy.EyeDye3 },
-        new List<Enemy> { Enemy.EyeDye4, Enemy.EyeDye5, Enemy.EyeDye3 },
-        new List<Enemy> { Enemy.EyeDye4, Enemy.EyeDye5, Enemy.EyeDye3 },
-        new List<Enemy> { Enemy.EyeDye4, Enemy.EyeDye5, Enemy.EyeDye3 },
+        new List<Enemy> { Enemy.Froopa, Enemy.Froopa },
+        new List<Enemy> { Enemy.Apple },
+        //new List<Enemy> { Enemy.Froopa, Enemy.Nutbug, Enemy.Froopa },
+        //new List<Enemy> { Enemy.Nutbug, Enemy.Nutbug, Enemy.Nutbug },
+        //new List<Enemy> { Enemy.Reshroom, Enemy.Froopa, Enemy.Nutbug },
+        //new List<Enemy> { Enemy.Froopa, Enemy.Froopa, Enemy.Froopa, Enemy.Froopa },
+        //new List<Enemy> { Enemy.Reshroom, Enemy.Reshroom },
     };
     private List<GameObject> WaveNodes = new List<GameObject>();
 
@@ -89,11 +93,24 @@ public class BattleManager_SCR : MonoBehaviour
             Light,
             Dark
         }
+        public enum StatusAilment
+        {
+            ATK_Up = 0,
+            DEF_Up,
+            Sleep,
+            Lucky
+        }
+        BattleManager_SCR BM;
         public int Level { get; set; }
         public Element mainElement { get; set; }
         public int HP { get; set; }
         public int MaxHP { get; set; }
+        public int ATK { get; set; }
+        public int ATK_LevelNum { get; set; }
+        public readonly int[] ATK_Levels = new int[6] { 0, 2, 4, 6, 8, 10 };
         public int DEF { get; set; }
+        public int DEF_LevelNum { get; set; }
+        public readonly int[] DEF_Levels = new int[6] { 0, 1, 2, 3, 4, 5 };
         public int CP { get; set; }
         public int MaxCP { get; set; }
         public List<GameObject> CommandSlots = new List<GameObject>();
@@ -101,18 +118,30 @@ public class BattleManager_SCR : MonoBehaviour
         public int EXP { get; set; }
         public int MaxEXP { get; set; }
         public float penaltyTime { get; set; }
+        public int LUCK { get; set; }
+        public int LUCK_LevelNum { get; set; }
+        public readonly int[] LUCK_Levels = new int[6] { 0, 4, 8, 16, 33, 50 };
+
+        private List<StatusAilment> AilmentList = new List<StatusAilment>();
+        private List<GameObject> AilmentBoxes = new List<GameObject>();
         public readonly float MaxPenaltyTime = 20f;
+        public bool penaltyTimerON = true;
         public int selectedCmdNum = 0;
 
         public MainPlayer()
         {
             Level = 1;
-            mainElement = Element.Fire;
+            mainElement = Element.Null;
             HP = 20;
             MaxHP = 20;
-            DEF = 0;
-            CP = 5;
-            MaxCP = 5;
+            ATK = ATK_Levels[0];
+            ATK_LevelNum = 0;
+            DEF = DEF_Levels[0];
+            DEF_LevelNum = 0;
+            CP = 10;
+            MaxCP = 10;
+            LUCK = LUCK_Levels[0];
+            LUCK_LevelNum = 0;
             EXP = 0;
             MaxEXP = 100;
             penaltyTime = 20f;
@@ -148,13 +177,106 @@ public class BattleManager_SCR : MonoBehaviour
         }
         public IEnumerator UseCommand(int commandNum)
         {
+            BM = GameObject.Find("BattleManager").GetComponent<BattleManager_SCR>();
             CP -= CommandSlots[commandNum].GetComponent<Command_SCR>().GetCost();
             float delay = CommandSlots[commandNum].GetComponent<Command_SCR>().ActivateCommand();
             yield return new WaitForSeconds(delay);
-
-            BattleManager_SCR BM = GameObject.Find("BattleManager").GetComponent<BattleManager_SCR>();
             BM.allowBattleControls = true;
             BM.WriteMessage($"Form a 4-tile sequence!", false);
+        }
+        public void AddStatusAilment(StatusAilment SA, int turnNum)
+        {
+            BM = GameObject.Find("BattleManager").GetComponent<BattleManager_SCR>();
+            bool repeatAilmentFound = false;
+            int index = AilmentList.Count;
+            if (turnNum != -1) { turnNum = Mathf.Clamp(turnNum, 1, 5); }
+
+            for (int i = 0; i < AilmentList.Count; i++)
+            {
+                if (SA == AilmentList[i]) { repeatAilmentFound = true; index = i; break; }
+            }
+
+            if (repeatAilmentFound)
+            {
+
+            }
+            else
+            {
+                AilmentList.Add(SA);
+                AilmentBoxes.Add(OtherFunctions.CreateObjectFromResource("Prefabs/StatusAilmentIcon_PFB", BM.PlayerBoard.transform.position + new Vector3(163f + (index * 90f), -230f, -10f)));
+                LookupAilment(index, SA);
+                AilmentBoxes[index].GetComponent<StatusAilmentIcon_SCR>().SetTurns(turnNum);
+                AilmentBoxes[index].transform.SetParent(BM.PlayerBoard.transform);
+            }
+        }
+        private void LookupAilment(int index, StatusAilment SA)
+        {
+            switch (SA)
+            {
+                case StatusAilment.ATK_Up:
+                    {
+                        AilmentBoxes[index].GetComponent<StatusAilmentIcon_SCR>().SetStatusAilment(0);
+                        OtherFunctions.ChangeSprite(AilmentBoxes[index], "Sprites/GameplayUI/StatusAilmentIcons", 0);
+                        break;
+                    }
+                case StatusAilment.DEF_Up:
+                    {
+                        AilmentBoxes[index].GetComponent<StatusAilmentIcon_SCR>().SetStatusAilment(1);
+                        OtherFunctions.ChangeSprite(AilmentBoxes[index], "Sprites/GameplayUI/StatusAilmentIcons", 1);
+                        break;
+                    }
+                case StatusAilment.Sleep:
+                    {
+                        AilmentBoxes[index].GetComponent<StatusAilmentIcon_SCR>().SetStatusAilment(2);
+                        OtherFunctions.ChangeSprite(AilmentBoxes[index], "Sprites/GameplayUI/StatusAilmentIcons", 2);
+                        break;
+                    }
+                case StatusAilment.Lucky:
+                    {
+                        AilmentBoxes[index].GetComponent<StatusAilmentIcon_SCR>().SetStatusAilment(3);
+                        OtherFunctions.ChangeSprite(AilmentBoxes[index], "Sprites/GameplayUI/StatusAilmentIcons", 3);
+                        break;
+                    }
+            }
+        }
+        public void DecrementAilmentTurn()
+        {
+            for (int i = 0; i < AilmentBoxes.Count; i++) { AilmentBoxes[i].GetComponent<StatusAilmentIcon_SCR>().DecrementTurn(); }
+            for (int i = 0; i < AilmentBoxes.Count; i++)
+            {
+                bool repeatLoop = false;
+                if (AilmentBoxes[i].GetComponent<StatusAilmentIcon_SCR>().isTurnZero()) { RemoveStatusAilment(i); repeatLoop = true; }
+                if (repeatLoop) { i--; }
+            }
+
+        }
+        public void RemoveStatusAilment(int boxNum)
+        {
+            StatusAilment SA = (StatusAilment)AilmentBoxes[boxNum].GetComponent<StatusAilmentIcon_SCR>().GetStatusAilment();
+            switch (SA)
+            {
+                case StatusAilment.ATK_Up:
+                    {
+                        ATK = ATK_Levels[0];
+                        ATK_LevelNum = 0;
+                        break;
+                    }
+                case StatusAilment.DEF_Up:
+                    {
+                        DEF = DEF_Levels[0];
+                        DEF_LevelNum = 0;
+                        break;
+                    }
+                case StatusAilment.Lucky:
+                    {
+                        LUCK = LUCK_Levels[0];
+                        LUCK_LevelNum = 0;
+                        break;
+                    }
+            }
+            Destroy(AilmentBoxes[boxNum]);
+            AilmentList.RemoveAt(boxNum);
+            AilmentBoxes.RemoveAt(boxNum);
         }
     }
 
@@ -170,9 +292,10 @@ public class BattleManager_SCR : MonoBehaviour
     private GameObject PlayerElement;
     [SerializeField] private GameObject[] Enemies = new GameObject[6];
     private GameObject EnemyTarget;
-    private int targetNum = 0;
+    [SerializeField] private int targetNum = 0;
     [SerializeField] private int numOfEnemies = 0;
     private GameObject[] SpawnLocations = new GameObject[6];
+    private GameObject[] BossLocations = new GameObject[3];
     private GameObject TileSelector;
     private TileAlgorithm_SCR TileAlgorithm;
     private Mode playerMode = Mode.Select;
@@ -187,13 +310,14 @@ public class BattleManager_SCR : MonoBehaviour
     private int tileCounter = 0;
     private bool ignoreAddingTiles = false;
     private bool shakeUI = false;
+    private bool inBossBattle = false;
     private Vector3 staticPos;
     private readonly Vector3[,] TilePosition = new Vector3[4, 4]
     {
-        { new Vector3(256f, 767f, -100f), new Vector3(256f, 627f, -100f), new Vector3(256f, 487f, -100f), new Vector3(256f, 347f, -100f)},
-        { new Vector3(388f, 767f, -100f), new Vector3(388f, 627f, -100f), new Vector3(388f, 487f, -100f), new Vector3(388f, 347f, -100f)},
-        { new Vector3(520f, 767f, -100f), new Vector3(520f, 627f, -100f), new Vector3(520f, 487f, -100f), new Vector3(520f, 347f, -100f)},
-        { new Vector3(652f, 767f, -100f), new Vector3(652f, 627f, -100f), new Vector3(652f, 487f, -100f), new Vector3(652f, 347f, -100f)}
+        { new Vector3(256f, 727f, -100f), new Vector3(256f, 587f, -100f), new Vector3(256f, 447f, -100f), new Vector3(256f, 307f, -100f)},
+        { new Vector3(388f, 727f, -100f), new Vector3(388f, 587f, -100f), new Vector3(388f, 447f, -100f), new Vector3(388f, 307f, -100f)},
+        { new Vector3(520f, 727f, -100f), new Vector3(520f, 587f, -100f), new Vector3(520f, 447f, -100f), new Vector3(520f, 307f, -100f)},
+        { new Vector3(652f, 727f, -100f), new Vector3(652f, 587f, -100f), new Vector3(652f, 447f, -100f), new Vector3(652f, 307f, -100f)}
     };
 
     private GameObject HPBar;
@@ -209,11 +333,18 @@ public class BattleManager_SCR : MonoBehaviour
     private GameObject CommandPrompt;
     private TMP_Text Message_Text;
     private GameObject YouWonPrompt;
+    private GameObject LevelClearedPrompt;
     private GameObject RewardBox;
     private GameObject RewardEXP_Text;
     private GameObject TilerIcon;
     private float HUD_vibration = 0f;
     private const string vowels = "aeiou";
+
+    private GameObject GM;
+    private GameObject DarkOverlay;
+    private GameObject ReadyBar;
+    private GameObject[] techBorder = new GameObject[2];
+    private GameObject ReadyToPlayText;
 
     MainPlayer Player1 = new MainPlayer();
     private float selectCooldownTime = 0.2f;
@@ -323,6 +454,7 @@ public class BattleManager_SCR : MonoBehaviour
                     }
                 case 2:
                     {
+                        Player1.DecrementAilmentTurn();
                         WriteMessage($"Form a 4-tile sequence!", false);
                         for (int i = 0; i < playTile.Length; i++) { StartCoroutine(EasingFunctions.ColorChangeFromHex(playTile[i], "#ffffff", 0.5f, 1f)); }
                         allowBattleControls = true;
@@ -364,7 +496,8 @@ public class BattleManager_SCR : MonoBehaviour
             if (AllEnemiesDefeated())
             {
                 SS_Animation_index = 0;
-                TLS = TimelineScript.BattleWon;
+                if (inBossBattle) { TLS = TimelineScript.LevelCleared; }
+                else { TLS = TimelineScript.BattleWon; }
                 timeVal = 0.1f;
             }
             else
@@ -388,6 +521,7 @@ public class BattleManager_SCR : MonoBehaviour
         }
         else if (timelinescript == TimelineScript.GoToPlayerTurn)
         {
+            Player1.DecrementAilmentTurn();
             ResetVariablesInTurn();
             for (int i = 0; i < playTile.Length; i++) { StartCoroutine(EasingFunctions.ColorChangeFromHex(playTile[i], "#ffffff", 0.5f, 1f)); }
             WriteMessage($"Form a 4-tile sequence!", false);
@@ -456,9 +590,95 @@ public class BattleManager_SCR : MonoBehaviour
                         ResetVariablesInWave();
                         WriteMessage($"Entering Wave {waveNum + 1}!", true);
                         StartCoroutine(EasingFunctions.TranslateTo(TilerIcon, WaveNodes[waveNum].transform.position, 1f));
-                        TLS = TimelineScript.BattleBegin;
+                        if (waveNum == World1_1_Waves.Count - 1) { TLS = TimelineScript.IntroduceBoss; }
+                        else { TLS = TimelineScript.BattleBegin; }
                         SS_Animation_index = 0;
                         timeVal = 1f;
+                        break;
+                    }
+            }
+        }
+        else if (timelinescript == TimelineScript.IntroduceBoss)
+        {
+            SS_Animation_index++;
+            switch (SS_Animation_index)
+            {
+                case 1:
+                    {
+                        inBossBattle = true;
+                        TilerIcon.GetComponent<Tiler_SCR>().ChangeEmote(Tiler_SCR.Emote.Idle);
+                        DarkOverlay = GameObject.Find("Dark Overlay");
+                        for (int i = 0; i < techBorder.Length; i++) { techBorder[i].GetComponent<SpriteRenderer>().color = new Color(1f, 0f, 0f, 1f); }
+                        ReadyToPlayText.GetComponent<TMP_Text>().text = $"WARNING!";
+                        StartCoroutine(EasingFunctions.ColorChangeFromHex(ReadyBar, "#000000", 0.25f, 1f));
+                        StartCoroutine(EasingFunctions.TranslateTo(techBorder[0], new Vector3(0f, 668f), 0.25f, 3, Easing.EaseOut));
+                        StartCoroutine(EasingFunctions.TranslateTo(techBorder[1], new Vector3(1920f, 412f), 0.25f, 3, Easing.EaseOut));
+                        StartCoroutine(EasingFunctions.TranslateTo(ReadyToPlayText, new Vector3(960f, 540f), 0.25f, 3, Easing.EaseOut));
+                        StartCoroutine(EasingFunctions.ColorChangeFromHex(DarkOverlay, "#000000", 0.25f, 0.5f));
+                        timeVal = 1.5f;
+                        break;
+                    }
+                case 2:
+                    {
+                        StartCoroutine(EasingFunctions.ColorChangeFromHex(ReadyBar, "#000000", 0.25f, 0f));
+                        StartCoroutine(EasingFunctions.TranslateTo(techBorder[0], new Vector3(0f, 1260f), 0.25f, 3, Easing.EaseOut));
+                        StartCoroutine(EasingFunctions.TranslateTo(techBorder[1], new Vector3(1920f, -180f), 0.25f, 3, Easing.EaseOut));
+                        StartCoroutine(EasingFunctions.TranslateTo(ReadyToPlayText, new Vector3(2700f, 540f), 0.25f, 3, Easing.EaseOut));
+                        StartCoroutine(EasingFunctions.ColorChangeFromHex(DarkOverlay, "#000000", 0.25f, 0f));
+                        TLS = TimelineScript.BattleBegin;
+                        SS_Animation_index = 0;
+                        timeVal = 0.5f;
+                        break;
+                    }
+            }
+        }
+        else if (timelinescript == TimelineScript.LevelCleared)
+        {
+            SS_Animation_index++;
+            switch (SS_Animation_index)
+            {
+                case 1:
+                    {
+                        Vector3 BoardPos = PlayerBoard.transform.position;
+
+                        TilerIcon.GetComponent<Tiler_SCR>().ChangeEmote(Tiler_SCR.Emote.Happy);
+                        LevelClearedPrompt = OtherFunctions.CreateObjectFromResource("Prefabs/EmptyObject_PFB", new Vector3(BoardPos.x + 254f, BoardPos.y - 320f, -500f));
+                        LevelClearedPrompt.AddComponent<LevelCleared_SCR>();
+                        WriteMessage($"Congrats! You defeated the boss and cleared all waves!", true);
+                        timeVal = 2f;
+                        break;
+                    }
+                case 2:
+                    {
+                        Vector3 BoardPos = PlayerBoard.transform.position;
+                        Vector3 PromptPos = LevelClearedPrompt.transform.position;
+
+                        StartCoroutine(EasingFunctions.TranslateTo(LevelClearedPrompt, PromptPos + new Vector3(0f, 120f, 0f), 0.5f, 3, Easing.EaseOut));
+                        RewardBox = OtherFunctions.CreateObjectFromResource("Prefabs/RewardBox_PFB", new Vector3(BoardPos.x + 420f, BoardPos.y - 720f, -500f));
+                        RewardEXP_Text = RewardBox.transform.Find("Canvas/EXP Text").gameObject;
+                        RewardEXP_Text.transform.position = RewardBox.transform.position + new Vector3(96f, 0f, -5f);
+                        RewardEXP_Text.GetComponent<TMP_Text>().text = $"+{EXP_Reward} EXP";
+                        WriteMessage($"You earned {EXP_Reward}EXP!", true);
+                        timeVal = 1f;
+                        break;
+                    }
+                case 3:
+                    {
+                        if (EXP_Reward > 0)
+                        {
+                            Player1.EXP += 1;
+                            EXP_Reward--;
+                            SS_Animation_index = 2;
+                            timeVal = 0.01f;
+                        }
+                        else { timeVal = 1f; }
+
+                        RewardEXP_Text.GetComponent<TMP_Text>().text = $"+{EXP_Reward} EXP";
+                        break;
+                    }
+                case 4:
+                    {
+                        GM.GetComponent<GameManager_SCR>().StartTimeline(GameManager_SCR.TimelineScript.DemoBattleToMainMenu, 1f);
                         break;
                     }
             }
@@ -511,7 +731,7 @@ public class BattleManager_SCR : MonoBehaviour
 
             string enemyName = Enemies[i].GetComponent<Enemy_SCR>().GetName();
             int enemyHP = Enemies[i].GetComponent<Enemy_SCR>().GetHP();
-            if (Enemies[i].GetComponent<Enemy_SCR>().GetHP() == 0)
+            if (Enemies[i].GetComponent<Enemy_SCR>().GetHP() == 0 && Enemies[i].GetComponent<Enemy_SCR>().GetEnemyType() != Enemy_SCR.Enemy.Apple)
             {
                 WriteMessage(GetDeathQuote(enemyName), true);
                 Enemies[i].GetComponent<Enemy_SCR>().EnemyIsDefeated();
@@ -526,14 +746,20 @@ public class BattleManager_SCR : MonoBehaviour
     {
         TileMethod tileMethod = TileMethod.Attack;
         bool isMultiAttacking = false;
-        int ATK = 0;
-        int DEF = 0;
+        int ATK = Player1.ATK;
+        int DEF = Player1.DEF;
         int HP = 0;
         int CP = 0;
         int multiplier = 1;
 
         for (int i = 0; i < tileCounter; i++)
         {
+            if (tileSequence[i].GetComponent<Playtile_SCR>().isTileNullified())
+            {
+                StartCoroutine(EasingFunctions.ColorChangeFromHex(tileSequence[i], "#ffffff", 0.5f, 0f));
+                if (i == tileCounter - 1 || !tileSequence[i + 1].GetComponent<Playtile_SCR>().isTileNullified()) { yield return new WaitForSeconds(1f); }
+                continue;
+            }
             int tileType = (int)tileSequence[i].GetComponent<Playtile_SCR>().GetTileType();
             switch (tileType)
             {
@@ -623,13 +849,13 @@ public class BattleManager_SCR : MonoBehaviour
                     }
             }
 
-            if (i == tileCounter-1 || !CheckTileMethod(tileMethod, tileSequence[i + 1]))
+            if (i == tileCounter-1 || tileSequence[i + 1].GetComponent<Playtile_SCR>().isTileNullified() || !CheckTileMethod(tileMethod, tileSequence[i + 1]))
             {
                 switch (tileMethod)
                 {
                     case TileMethod.Attack:
                         {
-                            DealDamage(ATK * multiplier, i);
+                            DealDamage(ATK * multiplier, i, Player1.LUCK);
                             yield return new WaitForSeconds(1f);
                             break;
                         }
@@ -637,7 +863,7 @@ public class BattleManager_SCR : MonoBehaviour
                         {
                             for (int tries = 0; tries < 3; tries++)
                             {
-                                DealDamage(ATK * multiplier, i);
+                                DealDamage(ATK * multiplier, i, Player1.LUCK + 4);
                                 yield return new WaitForSeconds(0.25f);
                             }
                             isMultiAttacking = false;
@@ -671,7 +897,7 @@ public class BattleManager_SCR : MonoBehaviour
                                 {
                                     for (int tries = 0; tries < 3; tries++)
                                     {
-                                        DealDamage(ATK * multiplier, i);
+                                        DealDamage(ATK * multiplier, i, Player1.LUCK + 4);
                                         yield return new WaitForSeconds(0.25f);
                                     }
                                     isMultiAttacking = false;
@@ -679,7 +905,7 @@ public class BattleManager_SCR : MonoBehaviour
                                 }
                                 else
                                 {
-                                    DealDamage(ATK * multiplier, i);
+                                    DealDamage(ATK * multiplier, i, Player1.LUCK);
                                     yield return new WaitForSeconds(1f);
                                     isMultiAttacking = false;
                                 }
@@ -713,11 +939,15 @@ public class BattleManager_SCR : MonoBehaviour
                             break;
                         }
                 }
-                ATK = 0;
-                DEF = 0;
+                ATK = Player1.ATK;
+                DEF = Player1.DEF;
                 HP = 0;
                 CP = 0;
                 multiplier = 1;
+            }
+            if (tileSequence[i].GetComponent<Playtile_SCR>().isTileNullified())
+            {
+                continue;
             }
         }
 
@@ -773,7 +1003,7 @@ public class BattleManager_SCR : MonoBehaviour
         }
     }
 
-    private void DealDamage(int baseDamage, int index)
+    private void DealDamage(int baseDamage, int index, int baseLUCK = 0)
     {
         GameObject Enemy;
         int enemyHP;
@@ -788,7 +1018,7 @@ public class BattleManager_SCR : MonoBehaviour
             enemyHP = Enemy.GetComponent<Enemy_SCR>().GetHP();
             elementMultiplier = DamageMultiplier[(int)Player1.mainElement, Enemies[targetNum].GetComponent<Enemy_SCR>().GetElement()];
             tempEnemyCounter++;
-            if (tempEnemyCounter >= enemyCounter)
+            if (tempEnemyCounter > enemyCounter)
             {
                 for (int i = 0; i < tileCounter; i++)
                 {
@@ -823,7 +1053,7 @@ public class BattleManager_SCR : MonoBehaviour
 
         GameObject AttackArrow = OtherFunctions.CreateObjectFromResource("Prefabs/AttackArrow_PFB", tileSequence[index].transform.position);
         AttackArrow.GetComponent<AttackArrow_SCR>().AcquireTarget(Enemy, (int)Player1.mainElement);
-        AttackArrow.GetComponent<AttackArrow_SCR>().TransferDamage(baseDamage);
+        AttackArrow.GetComponent<AttackArrow_SCR>().TransferDamage(baseDamage, baseLUCK);
         StartCoroutine(EasingFunctions.TranslateTo(AttackArrow, Enemy.transform.position, 0.5f, 3, Easing.EaseIn));
     }
 
@@ -881,6 +1111,27 @@ public class BattleManager_SCR : MonoBehaviour
     {
         Player1.HP += HP;
     }
+    public void AddATKToPlayer()
+    {
+        int currentLvl = ++Player1.ATK_LevelNum;
+        if (currentLvl < 5) { Player1.ATK = Player1.ATK_Levels[currentLvl]; }
+        Debug.Log($"ATK: {Player1.ATK}");
+        Player1.AddStatusAilment(MainPlayer.StatusAilment.ATK_Up, 2);
+    }
+    public void AddDEFToPlayer()
+    {
+        int currentLvl = ++Player1.DEF_LevelNum;
+        if (currentLvl < 5) { Player1.DEF = Player1.DEF_Levels[currentLvl]; }
+        Debug.Log($"DEF: {Player1.DEF}");
+        Player1.AddStatusAilment(MainPlayer.StatusAilment.DEF_Up, 2);
+    }
+    public void AddLUCKToPlayer()
+    {
+        int currentLvl = ++Player1.LUCK_LevelNum;
+        if (currentLvl < 5) { Player1.LUCK = Player1.LUCK_Levels[currentLvl]; }
+        Debug.Log($"LUCK: {Player1.LUCK}");
+        Player1.AddStatusAilment(MainPlayer.StatusAilment.Lucky, 2);
+    }
 
     public IEnumerator ReceiveDamage(int damage)
     {
@@ -894,7 +1145,7 @@ public class BattleManager_SCR : MonoBehaviour
         {
             TilerIcon.GetComponent<Tiler_SCR>().ChangeEmote(Tiler_SCR.Emote.Hurt);
             TilerIcon.GetComponent<Tiler_SCR>().Vibrate(fullDamage * 2);
-            WriteMessage($"You lost {fullDamage}HP!", true);
+            //WriteMessage($"You lost {fullDamage}HP!", true);
         }
         yield return new WaitForSeconds(1f);
     }
@@ -1166,6 +1417,13 @@ public class BattleManager_SCR : MonoBehaviour
         LevelNum_Text.text = $"Lv. {Player1.Level.ToString()}";
     }
 
+    public IEnumerator ResumeTurn()
+    {
+        StartCoroutine(CheckEnemyStatus());
+        yield return new WaitForSeconds(1.5f);
+        allowBattleControls = true;
+        WriteMessage($"Form a 4-tile sequence!", false);
+    }
     private void StartBattle()
     {
         timeline_running = true;
@@ -1179,7 +1437,9 @@ public class BattleManager_SCR : MonoBehaviour
         int numOfEmeniesToSpawn = 0;
 
         if (levelNum == 1) { enemyResource = LookupEnemy(World1_1_Waves[waveNum]); numOfEmeniesToSpawn = World1_1_Waves[waveNum].Count; }
-        Enemies[enemyCounter] = OtherFunctions.CreateObjectFromResource("Prefabs/Enemy_PFB", SpawnLocations[enemyCounter].transform.position);
+        if (inBossBattle) { Enemies[enemyCounter] = OtherFunctions.CreateObjectFromResource("Prefabs/Enemy_PFB", BossLocations[1].transform.position); }
+        else  { Enemies[enemyCounter] = OtherFunctions.CreateObjectFromResource("Prefabs/Enemy_PFB", SpawnLocations[enemyCounter].transform.position); }
+
         OtherFunctions.ChangeSprite(Enemies[enemyCounter], enemyResource, 0);
         Enemies[enemyCounter].GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 0f);
         Enemies[enemyCounter].GetComponent<Enemy_SCR>().AssignStats((int)World1_1_Waves[waveNum][enemyCounter], enemyCounter + 1);
@@ -1198,7 +1458,7 @@ public class BattleManager_SCR : MonoBehaviour
 
     private string GetDeathQuote(string enemyName)
     {
-        int quoteNum = UnityEngine.Random.Range(0, 7);
+        int quoteNum = UnityEngine.Random.Range(0, 6);
         float specialQuoteRNG = UnityEngine.Random.Range(0f, 5f);
 
         if (specialQuoteRNG > 4f)
@@ -1209,12 +1469,12 @@ public class BattleManager_SCR : MonoBehaviour
 
         switch (quoteNum)
         {
-            case 1: { return $"The {enemyName} was defeated!"; }
-            case 2: { return $"The {enemyName} fainted!"; }
-            case 3: { return $"The {enemyName} died!"; }
-            case 4: { return $"The {enemyName} was terminated!"; }
-            case 5: { return $"The {enemyName} lost the battle!"; }
-            case 6: { return $"The {enemyName} became tame!"; }
+            case 0: { return $"The {enemyName} was defeated!"; }
+            case 1: { return $"The {enemyName} fainted!"; }
+            case 2: { return $"The {enemyName} died!"; }
+            case 3: { return $"The {enemyName} was terminated!"; }
+            case 4: { return $"The {enemyName} lost the battle!"; }
+            case 5: { return $"The {enemyName} became tame!"; }
             default: { return $"The {enemyName} was defeated!"; }
         }
     }
@@ -1247,6 +1507,11 @@ public class BattleManager_SCR : MonoBehaviour
     {
         switch (enemyList[enemyCounter])
         {
+            case Enemy.Froopa: { return "Sprites/Enemies/Froopa"; }
+            case Enemy.Nutbug: { return "Sprites/Enemies/Nutbug"; }
+            case Enemy.Reshroom: { return "Sprites/Enemies/Reshroom"; }
+            case Enemy.Apple: { return "Sprites/Enemies/Apple"; }
+            case Enemy.Snapple: { return "Sprites/Enemies/Snapple"; }
             case Enemy.EyeDye1: { return "Sprites/Enemies/EyeDye1"; }
             case Enemy.EyeDye2: { return "Sprites/Enemies/EyeDye2"; }
             case Enemy.EyeDye3: { return "Sprites/Enemies/EyeDye3"; }
@@ -1257,8 +1522,7 @@ public class BattleManager_SCR : MonoBehaviour
             default: { return ""; }
         }
     }
-
-    private void CreatePlayerGrid(List<TileAlgorithm_SCR.Tile> playerGrid)
+    private void CreatePlayerGrid(List<TileAlgorithm_SCR.Tile> playerGrid, bool removeGridFromSequence = true)
     {
         //Create 4x4 grid (16 tiles) in Player Board
         for (int i = 0; i < 4; i++)
@@ -1275,7 +1539,14 @@ public class BattleManager_SCR : MonoBehaviour
                 StartCoroutine(EasingFunctions.ColorChangeFromHex(playTile[index], "#ffffff", 0.5f, 0.5f));
             }
         }
-        TileAlgorithm.GetComponent<TileAlgorithm_SCR>().RemoveGridFromSequence();
+        if (removeGridFromSequence) { TileAlgorithm.GetComponent<TileAlgorithm_SCR>().RemoveGridFromSequence(); }
+    }
+    public void SetPlaytile(int index, int tileTypeNum, int frameIndex = 0)
+    {
+        playTile[index].GetComponent<Playtile_SCR>().AssignTileType(tileTypeNum);
+        Playtile_SCR.Tile currentTileType = playTile[index].GetComponent<Playtile_SCR>().GetTileType();
+
+        if (currentTileType == Playtile_SCR.Tile.ElementSwap) { playTile[index].GetComponent<Playtile_SCR>().AssignTileType(tileTypeNum, frameIndex); }
     }
 
     public GameObject GetTile()
@@ -1283,6 +1554,10 @@ public class BattleManager_SCR : MonoBehaviour
         int index = (tileBlockY * 4) + tileBlockX;
         index = Mathf.Clamp(index, 0, 15);
         return playTile[index];
+    }
+    public GameObject[] GetPlayerGrid()
+    {
+        return playTile;
     }
 
     private bool CheckUnselectedTile(string direction)
@@ -1349,7 +1624,7 @@ public class BattleManager_SCR : MonoBehaviour
 
     public int GetPlayerElement() { return (int)Player1.mainElement; }
     public MainPlayer GetPlayer() { return Player1; }
-
+    public GameObject GetEnemyTarget() { return EnemyTarget; }
     private bool AllEnemiesDefeated() { return numOfEnemies == 0; }
     private void CreateWaveNodes()
     {
@@ -1410,6 +1685,8 @@ public class BattleManager_SCR : MonoBehaviour
             case "BattleScreen_SCN":
                 {
                     for (int i = 0; i < SpawnLocations.Length; i++) { SpawnLocations[i] = GameObject.Find($"SpawnLocation {i + 1}"); }
+                    for (int i = 0; i < BossLocations.Length; i++) { BossLocations[i] = GameObject.Find($"BossLocation {i + 1}"); }
+                    if (GameObject.Find("GameManager")) { GM = GameObject.Find("GameManager"); }
                     if (GameObject.Find("Player1 Board")) { PlayerBoard = GameObject.Find("Player1 Board"); }
                     if (GameObject.Find("HP FullBar")) { HPBar = GameObject.Find("HP FullBar"); }
                     if (GameObject.Find("CP FullBar")) { CPBar = GameObject.Find("CP FullBar"); }
@@ -1421,6 +1698,10 @@ public class BattleManager_SCR : MonoBehaviour
                     if (GameObject.Find("CP Text")) { CP_Text = GameObject.Find("CP Text").GetComponent<TMP_Text>(); }
                     if (GameObject.Find("Level# Text")) { LevelNum_Text = GameObject.Find("Level# Text").GetComponent<TMP_Text>(); }
                     if (GameObject.Find("Message Text")) { Message_Text = GameObject.Find("Message Text").GetComponent<TMP_Text>(); }
+                    if (GameObject.Find("ReadyBar")) { ReadyBar = GameObject.Find("ReadyBar"); }
+                    if (GameObject.Find("TechBorder1")) { techBorder[0] = GameObject.Find("TechBorder1"); }
+                    if (GameObject.Find("TechBorder2")) { techBorder[1] = GameObject.Find("TechBorder2"); }
+                    if (GameObject.Find("ReadyToPlay Text")) { ReadyToPlayText = GameObject.Find("ReadyToPlay Text"); }
                     break;
                 }
         }

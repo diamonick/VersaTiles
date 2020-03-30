@@ -57,12 +57,12 @@ public class AttackArrow_SCR : MonoBehaviour
         Obj.GetComponent<SpriteRenderer>().color = ElementColor[elementNum];
     }
 
-    public void TransferDamage(int damage)
+    public void TransferDamage(int damage, int LUCK)
     {
         int luckyMultiplier = 1;
-        float randomChance = Random.Range(0, 100);
-        if (randomChance < 5f) { luckyMultiplier = 2; showLuckyText = true; }
+        if (RandomChance(LUCK)) { luckyMultiplier = 2; showLuckyText = true; }
 
         fullDamage = damage * luckyMultiplier;
     }
+    private bool RandomChance(int percentage) { return (Random.Range(0, 100) < percentage); }
 }

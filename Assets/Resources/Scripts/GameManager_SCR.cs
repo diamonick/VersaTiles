@@ -28,7 +28,8 @@ public class GameManager_SCR : MonoBehaviour
         BattleBegin,
         MenuToVersus,
         BackToMainMenu,
-        Popup
+        Popup,
+        DemoBattleToMainMenu
     }
 
     public enum MenuOption
@@ -459,6 +460,27 @@ public class GameManager_SCR : MonoBehaviour
                         StartCoroutine(EasingFunctions.TranslateTo(techBorder[1], new Vector3(1920f, -180f), 0.25f, 3, Easing.EaseOut));
                         StartCoroutine(EasingFunctions.TranslateTo(ReadyToPlayText, new Vector3(2700f, 540f), 0.25f, 3, Easing.EaseOut));
                         StartCoroutine(EasingFunctions.ColorChangeFromHex(DarkOverlay, "#000000", 0.25f, 0f));
+                        break;
+                    }
+            }
+        }
+        else if (timelinescript == TimelineScript.DemoBattleToMainMenu)
+        {
+            SS_Animation_index++;
+            switch (SS_Animation_index)
+            {
+                case 1:
+                    {
+                        StartCoroutine(EasingFunctions.ColorChangeFromHex(TopOverlay, "#000000", 2f, 1f));
+                        timeVal = 3f;
+                        break;
+                    }
+                case 2:
+                    {
+                        SceneManager.LoadScene("Resources/Scenes/TitleMenu_SCN");
+                        Bits_PS.GetComponent<ParticleSystem>().Stop();
+                        StartCoroutine(EasingFunctions.ColorChangeFromHex(TopOverlay, "#000000", 0.5f, 0f));
+                        StartTimeline(TimelineScript.TitleScreenAnimation, 1f);
                         break;
                     }
             }

@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 3158459445257862132}
   - component: {fileID: 5874517477911204221}
   m_Layer: 0
-  m_Name: YesNoButton_PFB
+  m_Name: PopupButton_PFB
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -69,7 +69,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 2
   m_Sprite: {fileID: 7678934710924141524, guid: 9305b2923874b064089b798b988d5447,
     type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}

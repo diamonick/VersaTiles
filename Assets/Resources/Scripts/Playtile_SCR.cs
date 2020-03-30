@@ -17,18 +17,22 @@ public class Playtile_SCR : MonoBehaviour
         CmdItem,        // Command Item
         Mul2,           // x2
         Mul3,           // x3
-        ElementSwap     // Element Swap
+        ElementSwap    // Element Swap
     };
 
     private GameObject Obj;
+    private Shader GreyscaleShader;
     private const string Resource = "Sprites/GameplayUI/PlayTiles";
     private Tile tileType = Tile.ATKPlus1;
+    private bool isNullified = false;
     [SerializeField] private int ID = 0;
     private int frameIndex = 0;
+    private float grayVal = 0f;
 
     private void Awake()
     {
         Obj = this.gameObject;
+        GreyscaleShader = Resources.Load<Shader>("Greyscale_SHD");
     }
 
     // Start is called before the first frame update
@@ -40,8 +44,23 @@ public class Playtile_SCR : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if (isNullified)
+        {
+            if (grayVal < 1f)
+            {
+                grayVal += 0.2f;
+                Obj.GetComponent<SpriteRenderer>().material.SetFloat("_EffectAmount", grayVal);
+            }
+        }
     }
+
+    public void EnableGreyscale()
+    {
+        Obj.GetComponent<SpriteRenderer>().material.shader = GreyscaleShader;
+        isNullified = true;
+    }
+
+    public bool isTileNullified() { return isNullified; }
 
     public int GetID() { return ID; }
     public void SetID(int id)
@@ -49,10 +68,12 @@ public class Playtile_SCR : MonoBehaviour
         ID = id;
         Obj.name = $"Playtile {id}";
     }
+    public int GetFrameIndex() { return frameIndex; }
     public Tile GetTileType() { return tileType; }
+    public void SetTileType(Tile t) { tileType = t; }
     public int GetElementIndex() { return frameIndex; }
 
-    public void AssignTileType(int typeNum)
+    public void AssignTileType(int typeNum, int frameNum = -1)
     {
         OtherFunctions.ChangeSprite(Obj, Resource, typeNum);
         switch (typeNum)
@@ -138,7 +159,8 @@ public class Playtile_SCR : MonoBehaviour
             case 11:
                 {
                     tileType = Tile.ElementSwap;
-                    frameIndex = Random.Range(13, 20);
+                    if (frameNum == -1) { frameIndex = Random.Range(13, 20); }
+                    else { frameIndex = frameNum; }
                     OtherFunctions.ChangeSprite(Obj, Resource, frameIndex);
                     break;
                 }
