@@ -19,7 +19,8 @@ public class BattleManager_SCR : MonoBehaviour
         GoToPlayerTurn,
         BattleWon,
         IntroduceBoss,
-        LevelCleared
+        LevelCleared,
+        GameOver
     }
 
     public enum Mode
@@ -71,12 +72,12 @@ public class BattleManager_SCR : MonoBehaviour
     private readonly List<List<Enemy>> World1_1_Waves = new List<List<Enemy>>()
     {
         new List<Enemy> { Enemy.Froopa, Enemy.Froopa },
-        new List<Enemy> { Enemy.Apple },
-        //new List<Enemy> { Enemy.Froopa, Enemy.Nutbug, Enemy.Froopa },
-        //new List<Enemy> { Enemy.Nutbug, Enemy.Nutbug, Enemy.Nutbug },
-        //new List<Enemy> { Enemy.Reshroom, Enemy.Froopa, Enemy.Nutbug },
-        //new List<Enemy> { Enemy.Froopa, Enemy.Froopa, Enemy.Froopa, Enemy.Froopa },
-        //new List<Enemy> { Enemy.Reshroom, Enemy.Reshroom },
+        new List<Enemy> { Enemy.Froopa, Enemy.Nutbug, Enemy.Froopa },
+        new List<Enemy> { Enemy.Nutbug, Enemy.Nutbug, Enemy.Nutbug },
+        new List<Enemy> { Enemy.Reshroom, Enemy.Froopa, Enemy.Nutbug },
+        new List<Enemy> { Enemy.Froopa, Enemy.Froopa, Enemy.Froopa, Enemy.Froopa },
+        new List<Enemy> { Enemy.Reshroom, Enemy.Reshroom },
+        new List<Enemy> { Enemy.Apple }
     };
     private List<GameObject> WaveNodes = new List<GameObject>();
 
@@ -125,7 +126,6 @@ public class BattleManager_SCR : MonoBehaviour
         private List<StatusAilment> AilmentList = new List<StatusAilment>();
         private List<GameObject> AilmentBoxes = new List<GameObject>();
         public readonly float MaxPenaltyTime = 20f;
-        public bool penaltyTimerON = true;
         public int selectedCmdNum = 0;
 
         public MainPlayer()
@@ -209,6 +209,7 @@ public class BattleManager_SCR : MonoBehaviour
                 AilmentBoxes[index].transform.SetParent(BM.PlayerBoard.transform);
             }
         }
+        public bool ZeroHP() { return HP == 0; }
         private void LookupAilment(int index, StatusAilment SA)
         {
             switch (SA)
@@ -324,6 +325,7 @@ public class BattleManager_SCR : MonoBehaviour
     private GameObject CPBar;
     private Image HP_HideBar;
     private Image CP_HideBar;
+    private GameObject Timer;
     private Image CircleTimer;
     private TMP_Text Timer_Text;
     private TMP_Text HP_Text;
@@ -379,6 +381,12 @@ public class BattleManager_SCR : MonoBehaviour
         CreateWaveNodes();
         TLS = TimelineScript.BattleBegin;
 
+        if (!GM.GetComponent<GameManager_SCR>().PenaltyTimerEnabled())
+        {
+            Timer.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 0f);
+            CircleTimer.GetComponent<Image>().color = new Color(1f, 1f, 1f, 0f);
+            Timer_Text.color = new Color(1f, 1f, 1f, 0f);
+        }
     }
 
     // Update is called once per frame
@@ -398,7 +406,7 @@ public class BattleManager_SCR : MonoBehaviour
             if (timeVal > 0f) { timeVal -= 1f * Time.deltaTime; }
             else { StartCoroutine(ExecuteTimeline(TLS)); }
         }
-        if (allowBattleControls && playerMode != Mode.DecideCommand)
+        if (GM.GetComponent<GameManager_SCR>().PenaltyTimerEnabled() && allowBattleControls && playerMode != Mode.DecideCommand)
         {
             if (Player1.penaltyTime > 0f) { Player1.penaltyTime -= 1f * Time.deltaTime; }
             else { FormTileSequence(); }
@@ -515,8 +523,8 @@ public class BattleManager_SCR : MonoBehaviour
                     }
                 }
 
-                TLS = TimelineScript.GoToPlayerTurn;
-                timeVal = 1f;
+                if (Player1.ZeroHP()) { TLS = TimelineScript.GameOver; SS_Animation_index = 0; timeVal = 0.2f; }
+                else { TLS = TimelineScript.GoToPlayerTurn; timeVal = 1f; }
             }
         }
         else if (timelinescript == TimelineScript.GoToPlayerTurn)
@@ -554,6 +562,7 @@ public class BattleManager_SCR : MonoBehaviour
 
                         StartCoroutine(EasingFunctions.TranslateTo(YouWonPrompt, PromptPos + new Vector3(0f, 120f, 0f), 0.5f, 3, Easing.EaseOut));
                         RewardBox = OtherFunctions.CreateObjectFromResource("Prefabs/RewardBox_PFB", new Vector3(BoardPos.x + 420f, BoardPos.y - 720f, -500f));
+                        RewardBox.transform.Find("Canvas").GetComponent<Canvas>().worldCamera = GameObject.Find("Main Camera").GetComponent<Camera>();
                         RewardEXP_Text = RewardBox.transform.Find("Canvas/EXP Text").gameObject;
                         RewardEXP_Text.transform.position = RewardBox.transform.position + new Vector3(96f, 0f, -5f);
                         RewardEXP_Text.GetComponent<TMP_Text>().text = $"+{EXP_Reward} EXP";
@@ -655,6 +664,7 @@ public class BattleManager_SCR : MonoBehaviour
 
                         StartCoroutine(EasingFunctions.TranslateTo(LevelClearedPrompt, PromptPos + new Vector3(0f, 120f, 0f), 0.5f, 3, Easing.EaseOut));
                         RewardBox = OtherFunctions.CreateObjectFromResource("Prefabs/RewardBox_PFB", new Vector3(BoardPos.x + 420f, BoardPos.y - 720f, -500f));
+                        RewardBox.transform.Find("Canvas").GetComponent<Canvas>().worldCamera = GameObject.Find("Main Camera").GetComponent<Camera>();
                         RewardEXP_Text = RewardBox.transform.Find("Canvas/EXP Text").gameObject;
                         RewardEXP_Text.transform.position = RewardBox.transform.position + new Vector3(96f, 0f, -5f);
                         RewardEXP_Text.GetComponent<TMP_Text>().text = $"+{EXP_Reward} EXP";
@@ -679,6 +689,27 @@ public class BattleManager_SCR : MonoBehaviour
                 case 4:
                     {
                         GM.GetComponent<GameManager_SCR>().StartTimeline(GameManager_SCR.TimelineScript.DemoBattleToMainMenu, 1f);
+                        break;
+                    }
+            }
+        }
+        else if (timelinescript == TimelineScript.GameOver)
+        {
+            SS_Animation_index++;
+            switch (SS_Animation_index)
+            {
+                case 1:
+                    {
+                        ReadyToPlayText.transform.position = new Vector3(-1618f, 540f);
+                        DarkOverlay = GameObject.Find("Dark Overlay");
+                        for (int i = 0; i < techBorder.Length; i++) { techBorder[i].GetComponent<SpriteRenderer>().color = new Color(0.5f, 0.5f, 0.5f, 1f); }
+                        ReadyToPlayText.GetComponent<TMP_Text>().text = $"GAME OVER";
+                        StartCoroutine(EasingFunctions.ColorChangeFromHex(ReadyBar, "#000000", 1f, 1f));
+                        StartCoroutine(EasingFunctions.TranslateTo(techBorder[0], new Vector3(0f, 668f), 1f, 3, Easing.EaseOut));
+                        StartCoroutine(EasingFunctions.TranslateTo(techBorder[1], new Vector3(1920f, 412f), 1f, 3, Easing.EaseOut));
+                        StartCoroutine(EasingFunctions.TranslateTo(ReadyToPlayText, new Vector3(960f, 540f), 1f, 3, Easing.EaseOut));
+                        StartCoroutine(EasingFunctions.ColorChangeFromHex(DarkOverlay, "#000000", 1f, 0.5f));
+                        GM.GetComponent<GameManager_SCR>().StartTimeline(GameManager_SCR.TimelineScript.DemoBattleToMainMenu, 1.5f);
                         break;
                     }
             }
@@ -863,11 +894,11 @@ public class BattleManager_SCR : MonoBehaviour
                         {
                             for (int tries = 0; tries < 3; tries++)
                             {
-                                DealDamage(ATK * multiplier, i, Player1.LUCK + 4);
-                                yield return new WaitForSeconds(0.25f);
+                                DealDamage(ATK * multiplier, i, Player1.LUCK + 8);
+                                yield return new WaitForSeconds(0.15f);
                             }
                             isMultiAttacking = false;
-                            yield return new WaitForSeconds(0.75f);
+                            yield return new WaitForSeconds(0.85f);
                             break;
                         }
                     case TileMethod.HealHP:
@@ -897,11 +928,11 @@ public class BattleManager_SCR : MonoBehaviour
                                 {
                                     for (int tries = 0; tries < 3; tries++)
                                     {
-                                        DealDamage(ATK * multiplier, i, Player1.LUCK + 4);
-                                        yield return new WaitForSeconds(0.25f);
+                                        DealDamage(ATK * multiplier, i, Player1.LUCK + 8);
+                                        yield return new WaitForSeconds(0.15f);
                                     }
                                     isMultiAttacking = false;
-                                    yield return new WaitForSeconds(0.75f);
+                                    yield return new WaitForSeconds(0.853f);
                                 }
                                 else
                                 {
@@ -1029,7 +1060,7 @@ public class BattleManager_SCR : MonoBehaviour
                 return;
             }
         }
-        while (enemyHP == 0);
+        while (enemyHP == 0 && Enemy != null);
 
         //if (baseDamage > enemyHP)
         //{
@@ -1406,8 +1437,9 @@ public class BattleManager_SCR : MonoBehaviour
             damageTint = Mathf.Clamp(damageTint, 0.1f, 1f);
             HPBar.GetComponent<SpriteRenderer>().color = new Color(1f, damageTint, damageTint, 1f);
         }
+        else { HPBar.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 1f); }
         if (almostTimeOver && Player1.penaltyTime > 0f) { CircleTimer.GetComponent<Image>().color = new Color(1f, 0f, 0f, 1f); }
-        else { CircleTimer.GetComponent<Image>().color = new Color(0f, 138f/255f, 1f, 1f); }
+        else if (GM.GetComponent<GameManager_SCR>().PenaltyTimerEnabled()) { CircleTimer.GetComponent<Image>().color = new Color(0f, 138f/255f, 1f, 1f); }
     }
     private void FormatText()
     {
@@ -1595,6 +1627,8 @@ public class BattleManager_SCR : MonoBehaviour
 
     private void ResetVariablesInTurn()
     {
+        EnemyTarget = Enemies[targetNum];
+        while (EnemyTarget == null) { targetNum = ++targetNum % enemyCounter; EnemyTarget = Enemies[targetNum]; }
         playerMode = Mode.Select;
         Player1.DEF = 0;
         Player1.penaltyTime = Player1.MaxPenaltyTime;
@@ -1692,6 +1726,7 @@ public class BattleManager_SCR : MonoBehaviour
                     if (GameObject.Find("CP FullBar")) { CPBar = GameObject.Find("CP FullBar"); }
                     if (GameObject.Find("HP DamageBar")) { HP_HideBar = GameObject.Find("HP DamageBar").GetComponent<Image>(); }
                     if (GameObject.Find("CP HideBar")) { CP_HideBar = GameObject.Find("CP HideBar").GetComponent<Image>(); }
+                    if (GameObject.Find("Timer")) { Timer = GameObject.Find("Timer"); }
                     if (GameObject.Find("CircleTimer")) { CircleTimer = GameObject.Find("CircleTimer").GetComponent<Image>(); }
                     if (GameObject.Find("Timer")) { Timer_Text = GameObject.Find("Time Text").GetComponent<TMP_Text>(); }
                     if (GameObject.Find("HP Text")) { HP_Text = GameObject.Find("HP Text").GetComponent<TMP_Text>(); }

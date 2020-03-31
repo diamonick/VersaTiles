@@ -87,6 +87,7 @@ public class Command_SCR : MonoBehaviour
         Name_Text.transform.position = Obj.transform.position + new Vector3(16f, 0f, -1f);
         Cost_Text.transform.position = Obj.transform.position + new Vector3(260f, 0f, -1f);
         SPR.color = new Color(1f, 1f, 1f, 0.25f);
+        Obj.transform.Find("Canvas").GetComponent<Canvas>().worldCamera = GameObject.Find("Main Camera").GetComponent<Camera>();
     }
 
     // Update is called once per frame

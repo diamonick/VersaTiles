@@ -133,7 +133,9 @@ public class Enemy_SCR : MonoBehaviour
         defaultMat = SPR.material;
         staticPos = Obj.transform.position;
         StatsBar = OtherFunctions.CreateObjectFromResource("Prefabs/Enemy_StatsBar_PFB", Obj.transform.position + new Vector3(-132f, -144f, -105f));
+        StatsBar.transform.Find("Stats").GetComponent<Canvas>().worldCamera = GameObject.Find("Main Camera").GetComponent<Camera>();
         TurnCounter = OtherFunctions.CreateObjectFromResource("Prefabs/TurnCounter_PFB", Obj.transform.position + new Vector3(0f, 0f, -105f));
+        TurnCounter.transform.Find("Canvas").GetComponent<Canvas>().worldCamera = GameObject.Find("Main Camera").GetComponent<Camera>();
     }
 
     // Update is called once per frame
@@ -150,6 +152,7 @@ public class Enemy_SCR : MonoBehaviour
             damageTint = Mathf.Clamp(damageTint, 0.1f, 1f);
             EnemyHPBar.GetComponent<SpriteRenderer>().color = new Color(1f, damageTint, damageTint, 1f);
         }
+        else { EnemyHPBar.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 1f); }
 
         if (isDefeated)
         {
@@ -285,7 +288,7 @@ public class Enemy_SCR : MonoBehaviour
             //Snapple
             case 4:
                 {
-                    EnemyStats("Snapple", Element.Wood, 36, 36, 4, 1, 45, 2, Enemy.Snapple, EnemyColor[3]);
+                    EnemyStats("Snapple", Element.Wood, 40, 40, 4, 1, 48, 2, Enemy.Snapple, EnemyColor[3]);
                     break;
                 }
             //Eye Dye 1
@@ -443,7 +446,7 @@ public class Enemy_SCR : MonoBehaviour
     public int GetElement() { return (int)mainElement; }
     public int GetHP() { return HP; }
     public int GetDefense() { return DEF; }
-    public void ReceiveDamage(int damage, bool ignoreDefense = false, bool flinchEnemy = false)
+    public void ReceiveDamage(int damage, bool ignoreDefense = false, bool flinchEnemy = false, float shakiness = -1)
     {
         int fullDamage = 0;
         float elementMultiplier = DamageMultiplier[BM.GetComponent<BattleManager_SCR>().GetPlayerElement(), (int)mainElement];
@@ -462,7 +465,8 @@ public class Enemy_SCR : MonoBehaviour
         {
             if (AilmentList[i] == StatusAilment.Sleep) { damagedInSleep = true; break; }
         }
-        vibration = fullDamage * 2f;
+        if (shakiness == -1) { vibration = fullDamage * 2f; }
+        else { vibration = shakiness; }
         timeVal = 0f;
     }
 
@@ -651,7 +655,7 @@ public class Enemy_SCR : MonoBehaviour
     }
     private IEnumerator Bite()
     {
-        WriteMessage($"The {enemyName} takes a soft bite on you!", true);
+        WriteMessage($"The {enemyName} takes a quick bite on you!", true);
         yield return new WaitForSeconds(1f);
         DealDamage(ATK, 0);
         turnsLeft = UnityEngine.Random.Range(1, 3);

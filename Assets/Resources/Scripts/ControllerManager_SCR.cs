@@ -85,6 +85,7 @@ public class ControllerManager_SCR : MonoBehaviour
                 return;
             }
             IDs[index] = joyStk.id;
+            p.controllers.hasKeyboard = true;
             p.controllers.AddController(joyStk, false); // assign joystick to player
             Debug.Log("Controller Assigned!");
             //systemPlayer.controllers.AddController(joyStk, true);

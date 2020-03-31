@@ -17,4 +17,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Resources/Scenes/BattleScreen_SCN.unity
     guid: eb9910853e6efa54baa35b57f158464a
+  - enabled: 1
+    path: Assets/Resources/Scenes/Tutorial_SCN.unity
+    guid: a3d1fa911411a9d4393f10d6361c8774
   m_configObjects: {}

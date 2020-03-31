@@ -38,7 +38,7 @@ public class SlapAnimation_SCR : MonoBehaviour
                     }
                 case 1:
                     {
-                        Enemy.GetComponent<Enemy_SCR>().ReceiveDamage(1, true, true);
+                        Enemy.GetComponent<Enemy_SCR>().ReceiveDamage(1, true, true, 10f);
                         StartCoroutine(EasingFunctions.ColorChangeFromHex(Obj, "#ffffff", 0.18f, 1));
                         StartCoroutine(EasingFunctions.TranslateTo(Obj, pos + new Vector3(128f, 64f, 0f), 0.2f, 5, Easing.EaseOut));
                         StartCoroutine(EasingFunctions.RelRotateTo(Obj, 180f, Axis.Y, 0.1f));

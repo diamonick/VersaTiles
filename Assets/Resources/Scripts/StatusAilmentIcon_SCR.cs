@@ -22,6 +22,7 @@ public class StatusAilmentIcon_SCR : MonoBehaviour
         Obj = this.gameObject;
         turnsLeft_Text = Obj.transform.Find("Canvas/TurnsLeft Text").gameObject;
         turnsLeft_Text.transform.position = Obj.transform.position + new Vector3(23f, -1f, -5f);
+        Obj.transform.Find("Canvas").GetComponent<Canvas>().worldCamera = GameObject.Find("Main Camera").GetComponent<Camera>();
     }
 
     // Update is called once per frame

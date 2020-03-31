@@ -43,29 +43,29 @@ public class TileAlgorithm_SCR : MonoBehaviour
     {
         Tile.ATKPlus1, Tile.ATKPlus1, Tile.ATKPlus1, Tile.ATKPlus1, Tile.ATKPlus1, Tile.ATKPlus1, Tile.ATKPlus1, Tile.ATKPlus1, Tile.ATKPlus1, Tile.ATKPlus1, Tile.ATKPlus1, Tile.ATKPlus1, Tile.ATKPlus1, Tile.ATKPlus1, Tile.ATKPlus1, Tile.ATKPlus1,
         Tile.ATKPlus2, Tile.ATKPlus2, Tile.ATKPlus2, Tile.ATKPlus2, Tile.ATKPlus2, Tile.ATKPlus2, Tile.ATKPlus2, Tile.ATKPlus2, Tile.ATKPlus2, Tile.ATKPlus2, Tile.ATKPlus2, Tile.ATKPlus2, Tile.ATKPlus2, Tile.ATKPlus2, Tile.ATKPlus2, Tile.ATKPlus2,
-        Tile.ATKPlus3, Tile.ATKPlus3, Tile.ATKPlus3, Tile.ATKPlus3, Tile.ATKPlus3, Tile.ATKPlus3, Tile.ATKPlus3, Tile.ATKPlus3,
-        Tile.ATKPlus4, Tile.ATKPlus4, Tile.ATKPlus4, Tile.ATKPlus4, Tile.ATKPlus4, Tile.ATKPlus4, Tile.ATKPlus4, Tile.ATKPlus4,
-        Tile.MulATKPlus1, Tile.MulATKPlus1, Tile.MulATKPlus2, Tile.MulATKPlus2,
+        Tile.ATKPlus3, Tile.ATKPlus3, Tile.ATKPlus3, Tile.ATKPlus3, Tile.ATKPlus3, Tile.ATKPlus3,
+        Tile.ATKPlus4, Tile.ATKPlus4, Tile.ATKPlus4, Tile.ATKPlus4, Tile.ATKPlus4, Tile.ATKPlus4,
+        Tile.MulATKPlus1, Tile.MulATKPlus1, Tile.MulATKPlus1, Tile.MulATKPlus2, Tile.MulATKPlus2, Tile.MulATKPlus2,
         Tile.HPPlus5, Tile.HPPlus5,
-        Tile.CPPlus1, Tile.CPPlus1, Tile.CPPlus1, Tile.CPPlus1,
-        Tile.CmdItem, Tile.CmdItem,
+        Tile.CPPlus1, Tile.CPPlus1, Tile.CPPlus1, Tile.CPPlus1, Tile.CPPlus1, Tile.CPPlus1,
+        Tile.CmdItem, Tile.CmdItem, Tile.CmdItem,
         Tile.Mul2,
-        Tile.Mul3,
-        Tile.ElementSwap, Tile.ElementSwap
+        Tile.Mul2,
+        Tile.ElementSwap
     };
     private List<List<Tile>> GridSequence = new List<List<Tile>>();
 
     // Start is called before the first frame update
     void Start()
     {
-        MakeGridSequence();
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        //timeVal -= 1f * Time.deltaTime;
-        //if (timeVal <= 0) { MakeGridSequence(); timeVal = 2f; }
+        timeVal -= 1f * Time.deltaTime;
+        if (timeVal <= 0) { MakeGridSequence(); timeVal = 2f; }
     }
 
     public List<Tile> GetGrid() { return GridSequence[0]; }
@@ -84,13 +84,13 @@ public class TileAlgorithm_SCR : MonoBehaviour
 
         int ATKPlus1_MAX = 8;       //Max # of Attack +1 Tiles
         int ATKPlus2_MAX = 8;       //Max # of Attack +2 Tiles
-        int ATKPlus3_MAX = 4;       //Max # of Attack +3 Tiles
-        int ATKPlus4_MAX = 4;       //Max # of Attack +4 Tiles
-        int MulATKPlus1_MAX = 2;       //Max # of Multi-Attack +1 Tiles
-        int MulATKPlus2_MAX = 2;       //Max # of Multi-Attack +2 Tiles
+        int ATKPlus3_MAX = 3;       //Max # of Attack +3 Tiles
+        int ATKPlus4_MAX = 3;       //Max # of Attack +4 Tiles
+        int MulATKPlus1_MAX = 3;       //Max # of Multi-Attack +1 Tiles
+        int MulATKPlus2_MAX = 3;       //Max # of Multi-Attack +2 Tiles
         int HPPlus5_MAX = 1;        //Max # of HP +5 Tiles
-        int CPPlus1_MAX = 2;        //Max # of CP +1 Tiles
-        int CmdItem_MAX = 1;        //Max # of Command Tiles
+        int CPPlus1_MAX = 3;        //Max # of CP +1 Tiles
+        int CmdItem_MAX = 2;        //Max # of Command Tiles
         int Mul_MAX = 1;            //Max # of Multiplier Tiles
         int ElementSwap_MAX = 1;    //Max # of Element Swap Tiles
 
@@ -520,7 +520,7 @@ public class TileAlgorithm_SCR : MonoBehaviour
     private bool CheckViolatedRule(ref int count, ref int typeCount, int max, bool isPlusTile)
     {
         //Ensures that for each individual grid, there are only 13 Attack Plus Tiles and 3 other tiles
-        int typeCountMax = (isPlusTile ? 12 : 4);
+        int typeCountMax = (isPlusTile ? 11 : 5);
         if (count < max && typeCount < typeCountMax) { count++; typeCount++; return false; }
         return true;
     }

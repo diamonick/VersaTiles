@@ -23,6 +23,7 @@ public class GameManager_SCR : MonoBehaviour
         SplashScreenAnimation,
         TitleScreenAnimation,
         TitleToMenu,
+        MenuToTutorial,
         MenuToArcade,
         GoToBattleScreen,
         BattleBegin,
@@ -97,6 +98,11 @@ public class GameManager_SCR : MonoBehaviour
     private IEnumerator[] easingMB = new IEnumerator[4];
     private const float MB_StartPosition = 420f;
     private float selectCooldownTime = 0.2f;
+    private bool tutorialRequested = false;
+    private bool penaltyRequested = false;
+    private bool tutorialChoice = false;
+    private bool penaltyChoice = false;
+    private bool penaltyTimerON = true;
     private Player systemPlayer;
     private bool allPlayersReady = false;
 
@@ -336,6 +342,10 @@ public class GameManager_SCR : MonoBehaviour
             {
                 case 1:
                     {
+                        tutorialRequested = false;
+                        penaltyRequested = false;
+                        tutorialChoice = false;
+                        penaltyChoice = false;
                         bool Discontinue = false;
                         for (int i = 0; i < TitleTiles.Length; i++)
                         {
@@ -387,6 +397,47 @@ public class GameManager_SCR : MonoBehaviour
                     }
             }
         }
+        else if (timelinescript == TimelineScript.MenuToTutorial)
+        {
+            SS_Animation_index++;
+            switch (SS_Animation_index)
+            {
+                case 1:
+                    {
+                        SceneManager.LoadScene("Resources/Scenes/Tutorial_SCN");
+                        timeVal = 1f;
+                        break;
+                    }
+                case 2:
+                    {
+                        tutorialRequested = true;
+                        StartCoroutine(EasingFunctions.ColorChangeFromHex(TopOverlay, "#000000", 0.5f, 0f));
+                        Popup = OtherFunctions.CreateObjectFromResource("Prefabs/PopupMsg_PFB", new Vector3(960f, -540f, -100f));
+                        OtherFunctions.ChangeSprite(Popup, "Sprites/PopupMessage", 1);
+                        Popup.GetComponent<Popup_SCR>().SetPopupType(Popup_SCR.PopupType.Question);
+
+                        StartCoroutine(EasingFunctions.TranslateTo(Popup, new Vector2(960f, 540f), 0.5f, 3, Easing.EaseOut));
+
+                        DisableMenuSelection();
+                        StartTimeline(TimelineScript.Popup, 1f);
+                        break;
+                    }
+                case 3:
+                    {
+                        tutorialRequested = false;
+                        penaltyRequested = true;
+                        Popup = OtherFunctions.CreateObjectFromResource("Prefabs/PopupMsg_PFB", new Vector3(960f, -540f, -100f));
+                        OtherFunctions.ChangeSprite(Popup, "Sprites/PopupMessage", 2);
+                        Popup.GetComponent<Popup_SCR>().SetPopupType(Popup_SCR.PopupType.Question);
+
+                        StartCoroutine(EasingFunctions.TranslateTo(Popup, new Vector2(960f, 540f), 0.5f, 3, Easing.EaseOut));
+
+                        DisableMenuSelection();
+                        StartTimeline(TimelineScript.Popup, 1f);
+                        break;
+                    }
+            }
+        }
         else if (timelinescript == TimelineScript.MenuToArcade)
         {
             SS_Animation_index++;
@@ -428,6 +479,8 @@ public class GameManager_SCR : MonoBehaviour
                     }
                 case 3:
                     {
+                        DontDestroyOnLoad(Bits_PS);
+                        DontDestroyOnLoad(Square_PS);
                         Destroy(GridBkg);
                         Destroy(LOCBkg);
                         Destroy(GradientBkg);
@@ -477,6 +530,7 @@ public class GameManager_SCR : MonoBehaviour
                     }
                 case 2:
                     {
+                        DarkOverlay.GetComponent<SpriteRenderer>().color = new Color(0f, 0f, 0f, 0f);
                         SceneManager.LoadScene("Resources/Scenes/TitleMenu_SCN");
                         Bits_PS.GetComponent<ParticleSystem>().Stop();
                         StartCoroutine(EasingFunctions.ColorChangeFromHex(TopOverlay, "#000000", 0.5f, 0f));
@@ -551,8 +605,35 @@ public class GameManager_SCR : MonoBehaviour
                 case 2:
                     {
                         Destroy(Popup);
-                        EnableMenuSelection(MenuOption.Quit);
-                        EndTimeline();
+                        if (tutorialRequested)
+                        {
+                            if (tutorialChoice)
+                            {
+
+                            }
+                            else
+                            {
+                                StartTimeline(TimelineScript.MenuToTutorial, 0.1f, 2);
+                            }
+                        }
+                        else if (penaltyRequested)
+                        {
+                            if (penaltyChoice)
+                            {
+                                penaltyTimerON = true;
+                            }
+                            else
+                            {
+                                penaltyTimerON = false;
+                            }
+                            StartCoroutine(EasingFunctions.ColorChangeFromHex(TopOverlay, "#000000", 0.5f, 1f));
+                            StartTimeline(TimelineScript.MenuToArcade, 2f);
+                        }
+                        else
+                        {
+                            EnableMenuSelection(MenuOption.Quit);
+                            EndTimeline();
+                        }
                         break;
                     }
             }
@@ -647,13 +728,14 @@ public class GameManager_SCR : MonoBehaviour
 
                             Destroy(SelectArrow);
                             DisableMenuSelection();
-                            StartTimeline(TimelineScript.MenuToArcade, 2f);
+                            StartTimeline(TimelineScript.MenuToTutorial, 2f);
                             StartCoroutine(EasingFunctions.ColorChangeFromHex(TopOverlay, "#000000", 0.5f, 1f));
                             break;
                         }
                     case MenuOption.Quit:
                         {
                             Popup = OtherFunctions.CreateObjectFromResource("Prefabs/PopupMsg_PFB", new Vector3(960f, -540f, -100f));
+                            OtherFunctions.ChangeSprite(Popup, "Sprites/PopupMessage", 0);
                             Popup.GetComponent<Popup_SCR>().SetPopupType(Popup_SCR.PopupType.Question);
 
                             StartCoroutine(EasingFunctions.TranslateTo(Popup, new Vector2(960f, 540f), 0.5f, 3, Easing.EaseOut));
@@ -924,6 +1006,11 @@ public class GameManager_SCR : MonoBehaviour
     public void DisableMenuSelection() { canMenuSelect = false; }
     public void EnablePopupSelection() { canPopupSelect = true; }
     public void DisablePopupSelection() { canPopupSelect = false; }
+    public bool IsInTutorialRoom() { return tutorialRequested; }
+    public bool IsInPenaltyRoom() { return penaltyRequested; }
+    public void SetTutorialChoice(bool choice) { tutorialChoice = choice; }
+    public void SetPenaltyChoice(bool choice) { penaltyChoice = choice; }
+    public bool PenaltyTimerEnabled() { return penaltyTimerON; }
     void OnEnable()
     {
         //Tell our 'OnLevelFinishedLoading' function to start listening for a scene change as soon as this script is enabled.
@@ -948,7 +1035,7 @@ public class GameManager_SCR : MonoBehaviour
                     if (GameObject.Find("Grid Background")) { GridBkg = GameObject.Find("Grid Background"); DontDestroyOnLoad(GridBkg); }
                     if (GameObject.Find("LOC Background")) { LOCBkg = GameObject.Find("LOC Background"); DontDestroyOnLoad(LOCBkg); }
                     if (GameObject.Find("DarkBlueGradient")) { GradientBkg = GameObject.Find("DarkBlueGradient"); DontDestroyOnLoad(GradientBkg); }
-                    if (GameObject.Find("Square PS")) { Square_PS = GameObject.Find("Square PS"); }
+                    if (GameObject.Find("Square PS")) { Square_PS = GameObject.Find("Square PS"); DontDestroyOnLoad(Square_PS); }
                     if (GameObject.Find("AnyButtonText_PFB")) { AnyButton_Text = GameObject.Find("AnyButtonText_PFB"); }
                     if (GameObject.Find("Bits PS")) { Bits_PS = GameObject.Find("Bits PS"); DontDestroyOnLoad(Bits_PS); }
                     if (GameObject.Find("Slide Bar")) { SlideBar = GameObject.Find("Slide Bar"); }

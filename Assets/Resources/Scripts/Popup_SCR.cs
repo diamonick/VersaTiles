@@ -19,6 +19,7 @@ public class Popup_SCR : MonoBehaviour
     }
     private const string Resource = "Sprites/PopupMessage";
     private GameObject Obj;
+    private GameObject GM;
     private SpriteRenderer SPR;
     private Sprite[] frames;
     private PopupType PT;
@@ -36,6 +37,7 @@ public class Popup_SCR : MonoBehaviour
 
     private void Awake()
     {
+        GM = GameObject.Find("GameManager");
         Obj = this.gameObject;
         SPR = Obj.GetComponent<SpriteRenderer>();
         frames = Resources.LoadAll<Sprite>(Resource);
@@ -119,14 +121,36 @@ public class Popup_SCR : MonoBehaviour
     {
         if (choice == Choice.Yes)
         {
+            if (GM.GetComponent<GameManager_SCR>().IsInTutorialRoom())
+            {
+                GM.GetComponent<GameManager_SCR>().SetTutorialChoice(true);
+            }
+            else if (GM.GetComponent<GameManager_SCR>().IsInPenaltyRoom())
+            {
+                GM.GetComponent<GameManager_SCR>().SetPenaltyChoice(true);
+            }
+            else
+            {
 #if UNITY_EDITOR
-            //Quit the game in Unity Editor
-            UnityEditor.EditorApplication.isPlaying = false;
+                //Quit the game in Unity Editor
+                UnityEditor.EditorApplication.isPlaying = false;
 #else
                 Application.Quit();
 #endif
+            }
         }
-        else if (choice == Choice.No) { return; }
+        else if (choice == Choice.No)
+        {
+            if (GM.GetComponent<GameManager_SCR>().IsInTutorialRoom())
+            {
+                GM.GetComponent<GameManager_SCR>().SetTutorialChoice(false);
+            }
+            else if (GM.GetComponent<GameManager_SCR>().IsInPenaltyRoom())
+            {
+                GM.GetComponent<GameManager_SCR>().SetPenaltyChoice(false);
+            }
+            else { return; }
+        }
     }
 
     public void EnableSelect()
