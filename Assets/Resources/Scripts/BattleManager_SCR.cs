@@ -108,7 +108,7 @@ public class BattleManager_SCR : MonoBehaviour
         public int MaxHP { get; set; }
         public int ATK { get; set; }
         public int ATK_LevelNum { get; set; }
-        public readonly int[] ATK_Levels = new int[6] { 0, 2, 4, 6, 8, 10 };
+        public readonly int[] ATK_Levels = new int[6] { 0, 1, 2, 3, 4, 5 };
         public int DEF { get; set; }
         public int DEF_LevelNum { get; set; }
         public readonly int[] DEF_Levels = new int[6] { 0, 1, 2, 3, 4, 5 };
@@ -121,11 +121,11 @@ public class BattleManager_SCR : MonoBehaviour
         public float penaltyTime { get; set; }
         public int LUCK { get; set; }
         public int LUCK_LevelNum { get; set; }
-        public readonly int[] LUCK_Levels = new int[6] { 0, 4, 8, 16, 33, 50 };
+        public readonly int[] LUCK_Levels = new int[6] { 0, 10, 20, 30, 40, 50 };
 
         private List<StatusAilment> AilmentList = new List<StatusAilment>();
         private List<GameObject> AilmentBoxes = new List<GameObject>();
-        public readonly float MaxPenaltyTime = 20f;
+        public readonly float MaxPenaltyTime = 25f;
         public int selectedCmdNum = 0;
 
         public MainPlayer()
@@ -144,7 +144,7 @@ public class BattleManager_SCR : MonoBehaviour
             LUCK_LevelNum = 0;
             EXP = 0;
             MaxEXP = 100;
-            penaltyTime = 20f;
+            penaltyTime = 25f;
         }
 
         public void CreateCommands()
@@ -1144,21 +1144,21 @@ public class BattleManager_SCR : MonoBehaviour
     }
     public void AddATKToPlayer()
     {
-        int currentLvl = ++Player1.ATK_LevelNum;
+        int currentLvl = (Player1.ATK_LevelNum == 5 ? Player1.ATK_LevelNum : ++Player1.ATK_LevelNum);
         if (currentLvl < 5) { Player1.ATK = Player1.ATK_Levels[currentLvl]; }
         Debug.Log($"ATK: {Player1.ATK}");
         Player1.AddStatusAilment(MainPlayer.StatusAilment.ATK_Up, 2);
     }
     public void AddDEFToPlayer()
     {
-        int currentLvl = ++Player1.DEF_LevelNum;
+        int currentLvl = (Player1.DEF_LevelNum == 5 ? Player1.DEF_LevelNum : ++Player1.DEF_LevelNum);
         if (currentLvl < 5) { Player1.DEF = Player1.DEF_Levels[currentLvl]; }
         Debug.Log($"DEF: {Player1.DEF}");
         Player1.AddStatusAilment(MainPlayer.StatusAilment.DEF_Up, 2);
     }
     public void AddLUCKToPlayer()
     {
-        int currentLvl = ++Player1.LUCK_LevelNum;
+        int currentLvl = (Player1.LUCK_LevelNum == 5 ? Player1.LUCK_LevelNum : ++Player1.LUCK_LevelNum);
         if (currentLvl < 5) { Player1.LUCK = Player1.LUCK_Levels[currentLvl]; }
         Debug.Log($"LUCK: {Player1.LUCK}");
         Player1.AddStatusAilment(MainPlayer.StatusAilment.Lucky, 2);

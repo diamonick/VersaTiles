@@ -30,7 +30,8 @@ public class GameManager_SCR : MonoBehaviour
         MenuToVersus,
         BackToMainMenu,
         Popup,
-        DemoBattleToMainMenu
+        DemoBattleToMainMenu,
+        ShowTutorial
     }
 
     public enum MenuOption
@@ -92,6 +93,10 @@ public class GameManager_SCR : MonoBehaviour
     //Menu variables
     private bool canMenuSelect = false;
     private bool canPopupSelect = false;
+    private bool canInstrSelect = false;
+    private GameObject[] InstrPanels = new GameObject[13];
+    private GameObject[] panelNodes = new GameObject[13];
+    private int panelNum = 0;
     private Vector3 currentSelectPosition = new Vector3(0f, 0f, 0f);
     private MenuOption MB = MenuOption.Arcade;
     private MenuOption previousMB = MenuOption.Arcade;
@@ -609,7 +614,7 @@ public class GameManager_SCR : MonoBehaviour
                         {
                             if (tutorialChoice)
                             {
-
+                                StartTimeline(TimelineScript.ShowTutorial, 0.1f);
                             }
                             else
                             {
@@ -634,6 +639,32 @@ public class GameManager_SCR : MonoBehaviour
                             EnableMenuSelection(MenuOption.Quit);
                             EndTimeline();
                         }
+                        break;
+                    }
+            }
+        }
+        else if (timelinescript == TimelineScript.ShowTutorial)
+        {
+            SS_Animation_index++;
+            switch (SS_Animation_index)
+            {
+                case 1:
+                    {
+                        GameObject InstrPanelGroup = OtherFunctions.CreateObjectFromResource("Prefabs/EmptyObject_PFB", new Vector3(3120f, 540f, -105f));
+                        for (int i = 0; i < InstrPanels.Length; i++)
+                        {
+                            InstrPanels[i] = OtherFunctions.CreateObjectFromResource("Prefabs/EmptyObject_PFB", new Vector3(3120f, 540f, -105f));
+                            OtherFunctions.ChangeSprite(InstrPanels[i], "Sprites/InstructionPanels", i);
+                            InstrPanels[i].transform.SetParent(InstrPanelGroup.transform);
+                        }
+                        StartCoroutine(EasingFunctions.TranslateTo(InstrPanels[panelNum], new Vector3(960f, 540f, -105f), 0.5f, 3, Easing.EaseOut));
+                        timeVal = 1f;
+                        break;
+                    }
+                case 2:
+                    {
+                        canInstrSelect = true;
+                        EndTimeline();
                         break;
                     }
             }
@@ -707,6 +738,27 @@ public class GameManager_SCR : MonoBehaviour
                     selectCooldownTime = 0.2f;
                     Popup.GetComponent<Popup_SCR>().ToggleChoice();
                 }
+            }
+        }
+        if (canInstrSelect)
+        {
+            if (systemPlayer.GetButton("Confirm") && CanMoveSelection() && panelNum < InstrPanels.Length - 1)
+            {
+                selectCooldownTime = 0.55f;
+                StartCoroutine(EasingFunctions.TranslateTo(InstrPanels[panelNum++], new Vector3(-1200f, 540f, -105f), 0.5f, 3, Easing.EaseOut));
+                StartCoroutine(EasingFunctions.TranslateTo(InstrPanels[panelNum], new Vector3(960f, 540f, -105f), 0.5f, 3, Easing.EaseOut));
+            }
+            else if (systemPlayer.GetButton("SelectRight") && CanMoveSelection() && panelNum < InstrPanels.Length-1)
+            {
+                selectCooldownTime = 0.55f;
+                StartCoroutine(EasingFunctions.TranslateTo(InstrPanels[panelNum++], new Vector3(-1200f, 540f, -105f), 0.5f, 3, Easing.EaseOut));
+                StartCoroutine(EasingFunctions.TranslateTo(InstrPanels[panelNum], new Vector3(960f, 540f, -105f), 0.5f, 3, Easing.EaseOut));
+            }
+            else if (systemPlayer.GetButton("SelectLeft") && CanMoveSelection() && panelNum > 0)
+            {
+                selectCooldownTime = 0.55f;
+                StartCoroutine(EasingFunctions.TranslateTo(InstrPanels[panelNum--], new Vector3(3120f, 540f, -105f), 0.5f, 3, Easing.EaseOut));
+                StartCoroutine(EasingFunctions.TranslateTo(InstrPanels[panelNum], new Vector3(960f, 540f, -105f), 0.5f, 3, Easing.EaseOut));
             }
         }
         else if (canMenuSelect)

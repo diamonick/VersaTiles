@@ -110,7 +110,7 @@ public class Enemy_SCR : MonoBehaviour
     private bool damagedInSleep = false;
     private bool isBadApple = false;
     private bool isFlinched = false;
-    private bool isFlinchable = false;
+    private bool isFlinchable = true;
 
     //Timeline Variables
     private int SS_Animation_index = 0;
@@ -134,6 +134,7 @@ public class Enemy_SCR : MonoBehaviour
         staticPos = Obj.transform.position;
         StatsBar = OtherFunctions.CreateObjectFromResource("Prefabs/Enemy_StatsBar_PFB", Obj.transform.position + new Vector3(-132f, -144f, -105f));
         StatsBar.transform.Find("Stats").GetComponent<Canvas>().worldCamera = GameObject.Find("Main Camera").GetComponent<Camera>();
+        StatsBar.transform.Find("EnemyHPBar/EnemyHP FullBar").GetComponent<Canvas>().worldCamera = GameObject.Find("Main Camera").GetComponent<Camera>();
         TurnCounter = OtherFunctions.CreateObjectFromResource("Prefabs/TurnCounter_PFB", Obj.transform.position + new Vector3(0f, 0f, -105f));
         TurnCounter.transform.Find("Canvas").GetComponent<Canvas>().worldCamera = GameObject.Find("Main Camera").GetComponent<Camera>();
     }
@@ -452,12 +453,20 @@ public class Enemy_SCR : MonoBehaviour
         float elementMultiplier = DamageMultiplier[BM.GetComponent<BattleManager_SCR>().GetPlayerElement(), (int)mainElement];
 
         if (!ignoreDefense) { fullDamage = Mathf.Max(fullDamage, 0, (int)(damage * elementMultiplier) - DEF); }
-        else { fullDamage = Mathf.Max(fullDamage, 0, (int)(damage * elementMultiplier)); }
+        else { fullDamage = Mathf.Max(fullDamage, 0, (int)(damage)); }
         HP -= fullDamage;
         hasTakenDamage = true;
         if (flinchEnemy)
         {
-            if (!isFlinchable) { isFlinched = true; }
+            if (isFlinchable)
+            {
+                if (turnsLeft == 1) { isFlinched = true; }
+                else
+                {
+                    isFlinchable = false;
+                    WriteMessage($"The {enemyName} cannot be flinched!", true);
+                }
+            }
             else { WriteMessage($"The {enemyName} cannot be flinched!", true); }
         }
         if (enemyType == Enemy.Apple) { isBadApple = true; }
@@ -535,7 +544,7 @@ public class Enemy_SCR : MonoBehaviour
         else
         {
             isFlinched = false;
-            isFlinchable = true;
+            isFlinchable = false;
             WriteMessage($"The {enemyName} was flinched and cannot move!", true);
             turnsLeft = 1;
             return 1f;
@@ -658,7 +667,7 @@ public class Enemy_SCR : MonoBehaviour
         WriteMessage($"The {enemyName} takes a quick bite on you!", true);
         yield return new WaitForSeconds(1f);
         DealDamage(ATK, 0);
-        turnsLeft = UnityEngine.Random.Range(1, 3);
+        turnsLeft = 1;
     }
     private IEnumerator JuicyBite()
     {
@@ -694,7 +703,7 @@ public class Enemy_SCR : MonoBehaviour
         yield return new WaitForSeconds(1f);
         WriteMessage($"The {enemyName} regained some of its health from your tiles", true);
         yield return new WaitForSeconds(1.5f);
-        turnsLeft = UnityEngine.Random.Range(1, 3);
+        turnsLeft = 2;
     }
     private IEnumerator SeedBarrage(int numOfHits)
     {

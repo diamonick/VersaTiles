@@ -8,7 +8,7 @@ public class Command_SCR : MonoBehaviour
 {
     public enum Rarity
     {
-        Rare = 100,
+        Rare = 5,
         VeryUncommon = 20,
         Uncommon = 40,
         Average = 50,
@@ -31,13 +31,13 @@ public class Command_SCR : MonoBehaviour
         SuperHeal,      // Uncommon
         FullHeal,       // Very Uncommon
         SlowHeal,       // Average
-        PowerUp,        // Average
-        DefenseUp,      // Average
+        PowerUp,        // Common
+        DefenseUp,      // Common
         Resist,         // Average
         Cure,           // Average
         Shuffle,        // Common
         SpreadAttack,   // Common
-        PiercingBlow,   // Uncommon
+        PiercingBlow,   // Average
         Counter,        //
         Slap,           // Common
         Burn,           // Common
@@ -116,29 +116,37 @@ public class Command_SCR : MonoBehaviour
 
     private Command GetCommand(int elem)
     {
+        int failSafeCounter = 0;
         Command cmd = Command.None;
         Element playerElement = (Element)elem;
 
-        if (RandomChance((int)Rarity.Common))
+        do
         {
-            cmd = GetRandomCommand(new List<Command>() { Command.Heal, Command.Shuffle, Command.Slap });
+            if (RandomChance((int)Rarity.Common))
+            {
+                cmd = GetRandomCommand(new List<Command>() { Command.Heal, Command.Shuffle, Command.Slap, Command.PowerUp, Command.DefenseUp });
+            }
+            else if (RandomChance((int)Rarity.Average))
+            {
+                cmd = GetRandomCommand(new List<Command>() { Command.PiercingBlow });
+            }
+            else if (RandomChance((int)Rarity.Uncommon))
+            {
+                cmd = GetRandomCommand(new List<Command>() { Command.SuperHeal, Command.LuckyBoost });
+            }
+            else if (RandomChance((int)Rarity.VeryUncommon))
+            {
+                cmd = GetRandomCommand(new List<Command>() { Command.FullHeal, Command.LuckyCharm });
+            }
+            else if (RandomChance((int)Rarity.Rare))
+            {
+                cmd = GetRandomCommand(new List<Command>() { Command.LuckySevenStreak });
+            }
+            failSafeCounter++;
+            if (failSafeCounter == 4) { cmd = Command.Shuffle; }
+
         }
-        else if (RandomChance((int)Rarity.Average))
-        {
-            cmd = GetRandomCommand(new List<Command>() { Command.PowerUp, Command.DefenseUp });
-        }
-        else if (RandomChance((int)Rarity.Uncommon))
-        {
-            cmd = GetRandomCommand(new List<Command>() { Command.SuperHeal, Command.LuckyBoost });
-        }
-        else if (RandomChance((int)Rarity.VeryUncommon))
-        {
-            cmd = GetRandomCommand(new List<Command>() { Command.FullHeal, Command.LuckyCharm });
-        }
-        else if (RandomChance((int)Rarity.Rare))
-        {
-            cmd = GetRandomCommand(new List<Command>() { Command.None });
-        }
+        while (cmd == Command.None);
 
         return cmd;
     }
@@ -160,11 +168,13 @@ public class Command_SCR : MonoBehaviour
             case Command.SuperHeal: { AssignStats("Super Heal", 5, "Uncommon", "You", new Color(1f, 81f / 255f, 184f / 255f), "Heals 30 HP."); break; }
             case Command.FullHeal: { AssignStats("Full Heal", 10, "Very Uncommon", "You", new Color(1f, 81f / 255f, 184f / 255f), "Fully heals your HP."); break; }
             case Command.Shuffle: { AssignStats("Shuffle", 1, "Common", "You", new Color(0f, 214f / 255f, 32f / 255f), "Shuffles all tiles in your grid."); break; }
+            case Command.PiercingBlow: { AssignStats("Piercing Blow", 4, "Average", "Enemy", new Color(1f, 132f / 255f, 0f), "Strong attack that negates the target enemy's defense."); break; }
             case Command.Slap: { AssignStats("Slap", 1, "Common", "Enemy", new Color(223f / 255f, 164f / 255f, 121f / 255f), "Flinches the enemy. Can only be used once per enemy."); break; }
-            case Command.PowerUp: { AssignStats("Power Up", 2, "Average", "You", new Color(1f, 0f, 0f), "Boosts your Attack by 1 stage."); break; }
-            case Command.DefenseUp: { AssignStats("Defense Up", 2, "Average", "You", new Color(0f, 84f / 255f, 1f), "Boosts your Defense by 1 stage."); break; }
+            case Command.PowerUp: { AssignStats("Power Up", 2, "Common", "You", new Color(1f, 0f, 0f), "Boosts your Attack by 1 stage."); break; }
+            case Command.DefenseUp: { AssignStats("Defense Up", 2, "Common", "You", new Color(0f, 84f / 255f, 1f), "Boosts your Defense by 1 stage."); break; }
             case Command.LuckyBoost: { AssignStats("Lucky Boost", 3, "Uncommon", "You", new Color(1f, 184f / 255f, 83f / 255f), "Boosts the chance of landing Lucky hits by 1 stage."); break; }
             case Command.LuckyCharm: { AssignStats("Lucky Charm", 6, "Very Uncommon", "You", new Color(1f, 213f / 255f, 44f / 255f), "Boosts the chance of landing Lucky hits by 2 stages."); break; }
+            case Command.LuckySevenStreak: { AssignStats("Lucky 7 Streak", 7, "Rare", "Enemy", new Color(1f, 33f / 255f, 78f / 255f), "Deals 7 damage to target enemy 1-7 time(s) per turn. Negates the target enemy's defense."); break; }
         }
         StartCoroutine(EasingFunctions.ColorChangeFromRGBA(Obj, new Color(SPR.color.r, SPR.color.g, SPR.color.b, 1f), 0.25f, Format.Scalar));
     }
@@ -181,11 +191,24 @@ public class Command_SCR : MonoBehaviour
             case Command.SuperHeal: { StartCoroutine(SuperHeal()); return 2f; }
             case Command.FullHeal: { StartCoroutine(FullHeal()); return 2f; }
             case Command.Shuffle: { StartCoroutine(Shuffle()); return 2.5f; }
+            case Command.PiercingBlow: { StartCoroutine(PiercingBlow()); return 2.5f; }
             case Command.Slap: { StartCoroutine(Slap()); return 2.5f; }
             case Command.PowerUp: { StartCoroutine(PowerUp()); return 2.5f; }
             case Command.DefenseUp: { StartCoroutine(DefenseUp()); return 2.5f; }
             case Command.LuckyBoost: { StartCoroutine(LuckyBoost()); return 2.5f; }
             case Command.LuckyCharm: { StartCoroutine(LuckyCharm()); return 2.5f; }
+            case Command.LuckySevenStreak:
+                {
+                    int numOfHits = 0;
+                    for (int i = 0; i < 7; i++)
+                    {
+                        if (numOfHits == 0) { numOfHits = 1; continue; }
+                        if (RandomChance(77)) { numOfHits++; }
+                        else { break; }
+                    }
+                    StartCoroutine(LuckySevenStreak(numOfHits));
+                    return 2f + (0.2f * numOfHits);
+                }
         }
         return 2f;
     }
@@ -250,6 +273,13 @@ public class Command_SCR : MonoBehaviour
             StartCoroutine(EasingFunctions.TranslateTo(tempGrid[i], tilePositions[i], 0.5f, 3, Easing.EaseOut));
         }
     }
+    private IEnumerator PiercingBlow()
+    {
+        yield return new WaitForSeconds(1f);
+        ClearMessage();
+        GameObject EnemyTarget = BM.GetComponent<BattleManager_SCR>().GetEnemyTarget();
+        EnemyTarget.GetComponent<Enemy_SCR>().ReceiveDamage(5, true);
+    }
     private IEnumerator Slap()
     {
         yield return new WaitForSeconds(1f);
@@ -285,6 +315,18 @@ public class Command_SCR : MonoBehaviour
         for (int i = 0; i < 2; i++) { BM.GetComponent<BattleManager_SCR>().AddLUCKToPlayer(); }
         int playerLUCKLvl = BM.GetComponent<BattleManager_SCR>().GetPlayer().LUCK_LevelNum;
         WriteMessage($"Your LUCK stat was increased! Current LUCK level: {playerLUCKLvl}", true);
+    }
+    private IEnumerator LuckySevenStreak(int numOfHits)
+    {
+        yield return new WaitForSeconds(1f);
+        GameObject EnemyTarget = BM.GetComponent<BattleManager_SCR>().GetEnemyTarget();
+        for (int tries = 0; tries < numOfHits; tries++)
+        {
+            EnemyTarget.GetComponent<Enemy_SCR>().ReceiveDamage(7, true);
+            yield return new WaitForSeconds(0.2f);
+        }
+        if (numOfHits == 7) { WriteMessage($"AMAZING!!!!!!! You landed {numOfHits} hits!!!!!!!", true); }
+        else { WriteMessage($"You landed {numOfHits} hits!", true); }
     }
 
     private void AssignStats(string name, int cp_cost, string rarity, string affectsWho, Color col, string desc)

@@ -1,0 +1,415 @@
+fileFormatVersion: 2
+guid: 39b9a704c61d6bb44918e9eeb0206f67
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 1609108783844100557
+    second: InstructionPanels_0
+  - first:
+      213: 8384421683454259589
+    second: InstructionPanels_1
+  - first:
+      213: 5223140749859419392
+    second: InstructionPanels_2
+  - first:
+      213: 2407743398166699458
+    second: InstructionPanels_3
+  - first:
+      213: -2436434970124411190
+    second: InstructionPanels_4
+  - first:
+      213: 7358158191069522520
+    second: InstructionPanels_5
+  - first:
+      213: -2186580018598455729
+    second: InstructionPanels_6
+  - first:
+      213: 482182705245700455
+    second: InstructionPanels_7
+  - first:
+      213: -7267503681062825128
+    second: InstructionPanels_8
+  - first:
+      213: 4788524674847767965
+    second: InstructionPanels_9
+  - first:
+      213: 759013448711191269
+    second: InstructionPanels_10
+  - first:
+      213: -374753375205615576
+    second: InstructionPanels_11
+  - first:
+      213: 1562580684461244233
+    second: InstructionPanels_12
+  externalObjects: {}
+  serializedVersion: 10
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 0
+    aniso: -1
+    mipBias: -100
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 1
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  platformSettings:
+  - serializedVersion: 3
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 8192
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 2
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: Standalone
+    maxTextureSize: 8192
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 2
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: InstructionPanels_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 2823
+        width: 1031
+        height: 941
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: dc90df9d9e3b45610800000000000000
+      internalID: 1609108783844100557
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InstructionPanels_1
+      rect:
+        serializedVersion: 2
+        x: 1031
+        y: 2823
+        width: 1031
+        height: 941
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 581bf5939137b5470800000000000000
+      internalID: 8384421683454259589
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InstructionPanels_2
+      rect:
+        serializedVersion: 2
+        x: 2062
+        y: 2823
+        width: 1031
+        height: 941
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 005fc3fa6d25c7840800000000000000
+      internalID: 5223140749859419392
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InstructionPanels_3
+      rect:
+        serializedVersion: 2
+        x: 3093
+        y: 2823
+        width: 1031
+        height: 941
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2cd94062dd50a6120800000000000000
+      internalID: 2407743398166699458
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InstructionPanels_4
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1882
+        width: 1031
+        height: 941
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ace156fad4b003ed0800000000000000
+      internalID: -2436434970124411190
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InstructionPanels_5
+      rect:
+        serializedVersion: 2
+        x: 1031
+        y: 1882
+        width: 1031
+        height: 941
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 85a64dbb3ed6d1660800000000000000
+      internalID: 7358158191069522520
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InstructionPanels_6
+      rect:
+        serializedVersion: 2
+        x: 2062
+        y: 1882
+        width: 1031
+        height: 941
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f46d87ede05b7a1e0800000000000000
+      internalID: -2186580018598455729
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InstructionPanels_7
+      rect:
+        serializedVersion: 2
+        x: 3093
+        y: 1882
+        width: 1031
+        height: 941
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 761c10f9d9e01b600800000000000000
+      internalID: 482182705245700455
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InstructionPanels_8
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 941
+        width: 1031
+        height: 941
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 853186e28e3a42b90800000000000000
+      internalID: -7267503681062825128
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InstructionPanels_9
+      rect:
+        serializedVersion: 2
+        x: 1031
+        y: 941
+        width: 1031
+        height: 941
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d9d7e7232d1447240800000000000000
+      internalID: 4788524674847767965
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InstructionPanels_10
+      rect:
+        serializedVersion: 2
+        x: 2062
+        y: 941
+        width: 1031
+        height: 941
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5eabc2ec5be888a00800000000000000
+      internalID: 759013448711191269
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InstructionPanels_11
+      rect:
+        serializedVersion: 2
+        x: 3093
+        y: 941
+        width: 1031
+        height: 941
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8289d707acb9ccaf0800000000000000
+      internalID: -374753375205615576
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InstructionPanels_12
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 1031
+        height: 941
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 94ff2368ad66fa510800000000000000
+      internalID: 1562580684461244233
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+  spritePackingTag: 
+  pSDRemoveMatte: 0
+  pSDShowRemoveMatteOption: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
