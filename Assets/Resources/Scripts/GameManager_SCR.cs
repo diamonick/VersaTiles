@@ -96,6 +96,7 @@ public class GameManager_SCR : MonoBehaviour
     private bool canInstrSelect = false;
     private GameObject[] InstrPanels = new GameObject[13];
     private GameObject[] panelNodes = new GameObject[13];
+    private GameObject[] panelArrows = new GameObject[2];
     private int panelNum = 0;
     private Vector3 currentSelectPosition = new Vector3(0f, 0f, 0f);
     private MenuOption MB = MenuOption.Arcade;
@@ -429,6 +430,10 @@ public class GameManager_SCR : MonoBehaviour
                     }
                 case 3:
                     {
+                        for (int i = 0; i < panelArrows.Length; i++)
+                        {
+                            if (panelArrows[i] != null) { Destroy(panelArrows[i]); }
+                        }
                         tutorialRequested = false;
                         penaltyRequested = true;
                         Popup = OtherFunctions.CreateObjectFromResource("Prefabs/PopupMsg_PFB", new Vector3(960f, -540f, -100f));
@@ -484,8 +489,8 @@ public class GameManager_SCR : MonoBehaviour
                     }
                 case 3:
                     {
-                        DontDestroyOnLoad(Bits_PS);
-                        DontDestroyOnLoad(Square_PS);
+                        Destroy(Bits_PS);
+                        Destroy(Square_PS);
                         Destroy(GridBkg);
                         Destroy(LOCBkg);
                         Destroy(GradientBkg);
@@ -663,6 +668,13 @@ public class GameManager_SCR : MonoBehaviour
                     }
                 case 2:
                     {
+                        for (int i = 0; i < panelArrows.Length; i++)
+                        {
+                            panelArrows[i] = OtherFunctions.CreateObjectFromResource("Prefabs/EmptyObject_PFB", new Vector3(420f + ((540f + 960f) * i), 540f, -105f));
+                            OtherFunctions.ChangeSprite(panelArrows[i], "Sprites/SelectArrow");
+                            panelArrows[i].GetComponent<SpriteRenderer>().color = new Color(0f, 138f / 255f, 1f, 1f);
+                            if (i == 0) { panelArrows[i].transform.rotation = Quaternion.Euler(0f, 180f, 0f); }
+                        }
                         canInstrSelect = true;
                         EndTimeline();
                         break;
@@ -742,17 +754,21 @@ public class GameManager_SCR : MonoBehaviour
         }
         if (canInstrSelect)
         {
-            if (systemPlayer.GetButton("Confirm") && CanMoveSelection() && panelNum < InstrPanels.Length - 1)
+            if (systemPlayer.GetButton("SelectRight") && CanMoveSelection())
             {
-                selectCooldownTime = 0.55f;
-                StartCoroutine(EasingFunctions.TranslateTo(InstrPanels[panelNum++], new Vector3(-1200f, 540f, -105f), 0.5f, 3, Easing.EaseOut));
-                StartCoroutine(EasingFunctions.TranslateTo(InstrPanels[panelNum], new Vector3(960f, 540f, -105f), 0.5f, 3, Easing.EaseOut));
-            }
-            else if (systemPlayer.GetButton("SelectRight") && CanMoveSelection() && panelNum < InstrPanels.Length-1)
-            {
-                selectCooldownTime = 0.55f;
-                StartCoroutine(EasingFunctions.TranslateTo(InstrPanels[panelNum++], new Vector3(-1200f, 540f, -105f), 0.5f, 3, Easing.EaseOut));
-                StartCoroutine(EasingFunctions.TranslateTo(InstrPanels[panelNum], new Vector3(960f, 540f, -105f), 0.5f, 3, Easing.EaseOut));
+                if (panelNum < InstrPanels.Length - 1)
+                {
+                    selectCooldownTime = 0.55f;
+                    StartCoroutine(EasingFunctions.TranslateTo(InstrPanels[panelNum++], new Vector3(-1200f, 540f, -105f), 0.5f, 3, Easing.EaseOut));
+                    StartCoroutine(EasingFunctions.TranslateTo(InstrPanels[panelNum], new Vector3(960f, 540f, -105f), 0.5f, 3, Easing.EaseOut));
+                }
+                else
+                {
+                    canInstrSelect = false;
+                    Destroy(panelArrows[1]);
+                    StartCoroutine(EasingFunctions.TranslateTo(InstrPanels[panelNum], new Vector3(-1200f, 540f, -105f), 0.5f, 3, Easing.EaseOut));
+                    StartTimeline(TimelineScript.MenuToTutorial, 0.5f, 2);
+                }
             }
             else if (systemPlayer.GetButton("SelectLeft") && CanMoveSelection() && panelNum > 0)
             {
