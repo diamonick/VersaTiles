@@ -96,6 +96,8 @@ public class GameManager_SCR : MonoBehaviour
     private GameObject ReadyBar;
     private GameObject[] techBorder = new GameObject[2];
     private GameObject ReadyToPlayText;
+    private AudioSource AudioSrc_BGM;
+    private AudioClip BGM;
 
     //Menu variables
     private bool canMenuSelect = false;
@@ -130,6 +132,9 @@ public class GameManager_SCR : MonoBehaviour
 
     private void Awake()
     {
+        AudioSrc_BGM = this.gameObject.GetComponent<AudioSource>();
+        BGM = Resources.Load<AudioClip>("Audio/BackgroundMusic/Menu_BGM");
+        AudioSrc_BGM.clip = BGM;
         DD_Letter[0] = GameObject.Find("DCube1");
         DD_Letter[1] = GameObject.Find("DCube2");
         DD_Title = GameObject.Find("DigitalDiceTitle");
@@ -350,6 +355,10 @@ public class GameManager_SCR : MonoBehaviour
                         GradientBkg.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 1f);
                         CopyrightInfo.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 1f);
                         Bits_PS.GetComponent<ParticleSystem>().Play();
+
+                        ChangeBGM("Audio/BackgroundMusic/Menu_BGM");
+                        StartCoroutine(AudioFade_SCR.Fade(AudioSrc_BGM, 1f, 1f));
+
                         timeVal = 2f;
                         break;
                     }
@@ -498,6 +507,7 @@ public class GameManager_SCR : MonoBehaviour
             {
                 case 1:
                     {
+                        StartCoroutine(AudioFade_SCR.Fade(AudioSrc_BGM, 0f, 2f));
                         StartCoroutine(EasingFunctions.ColorChangeFromHex(TopOverlay, "#000000", 0.5f, 1f));
                         timeVal = 2f;
                         break;
@@ -511,6 +521,9 @@ public class GameManager_SCR : MonoBehaviour
                     }
                 case 3:
                     {
+                        ChangeBGM("Audio/BackgroundMusic/Jungle1_BGM");
+                        StartCoroutine(AudioFade_SCR.Fade(AudioSrc_BGM, 1f, 1f));
+
                         Destroy(Bits_PS);
                         Destroy(Square_PS);
                         Destroy(GridBkg);
@@ -556,6 +569,7 @@ public class GameManager_SCR : MonoBehaviour
             {
                 case 1:
                     {
+                        StartCoroutine(AudioFade_SCR.Fade(AudioSrc_BGM, 0f, 2f));
                         StartCoroutine(EasingFunctions.ColorChangeFromHex(TopOverlay, "#000000", 2f, 1f));
                         timeVal = 3f;
                         break;
@@ -1101,6 +1115,12 @@ public class GameManager_SCR : MonoBehaviour
     public void SetTutorialChoice(bool choice) { tutorialChoice = choice; }
     public void SetPenaltyChoice(bool choice) { penaltyChoice = choice; }
     public bool PenaltyTimerEnabled() { return penaltyTimerON; }
+    public void ChangeBGM(string Src)
+    {
+        BGM = Resources.Load<AudioClip>(Src);
+        AudioSrc_BGM.clip = BGM;
+        AudioSrc_BGM.Play();
+    }
     void OnEnable()
     {
         //Tell our 'OnLevelFinishedLoading' function to start listening for a scene change as soon as this script is enabled.
