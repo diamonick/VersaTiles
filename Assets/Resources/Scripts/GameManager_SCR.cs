@@ -8,6 +8,11 @@ using TMPro;
 
 public class GameManager_SCR : MonoBehaviour
 {
+    public enum ScreenType
+    {
+        Windowed = 0,
+        Fullscreen
+    };
     private string[] DescriptionArray = new string[5]
     {
         "Complete a series of enemy waves in turn-based fashion.",
@@ -113,6 +118,7 @@ public class GameManager_SCR : MonoBehaviour
     private bool penaltyTimerON = true;
     private Player systemPlayer;
     private bool allPlayersReady = false;
+    private ScreenType ST = ScreenType.Windowed;
 
     //Arcade Menu variables
     private Theme worldTheme = Theme.Jungle;
@@ -141,6 +147,19 @@ public class GameManager_SCR : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (systemPlayer.GetButtonDown("SetResolution"))
+        {
+            if (ST == ScreenType.Windowed)
+            {
+                ST = ScreenType.Fullscreen;
+                Screen.SetResolution(1920, 1080, true);
+            }
+            else
+            {
+                ST = ScreenType.Windowed;
+                Screen.SetResolution(1920, 1080, false);
+            }
+        }
         timeVal = Mathf.Clamp(timeVal, 0f, timeValMax);
 
         if (timeline_running)
