@@ -44,8 +44,11 @@ public class AttackArrow_SCR : MonoBehaviour
             if (timeVal > 0f) { timeVal -= 1f * Time.deltaTime; }
             else
             {
-                if (showLuckyText) { OtherFunctions.CreateObjectFromResource("Prefabs/LuckyText_PFB", Obj.transform.position); }
                 EnemyTarget.GetComponent<Enemy_SCR>().ReceiveDamage(fullDamage);
+                if (showLuckyText)
+                {
+                    OtherFunctions.CreateObjectFromResource("Prefabs/LuckyText_PFB", Obj.transform.position);
+                }
                 Destroy(Obj);
             }
         }

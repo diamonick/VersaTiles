@@ -317,7 +317,7 @@ public class Enemy_SCR : MonoBehaviour
             //Reshroom
             case 2:
                 {
-                    EnemyStats("Reshroom", Element.Water, 14, 14, 4, 0, 10, 1, Enemy.Reshroom, EnemyColor[2]);
+                    EnemyStats("Reshroom", Element.Water, 12, 12, 4, 0, 10, 1, Enemy.Reshroom, EnemyColor[2]);
                     AddStatusAilment(StatusAilment.Sleep, -1);
                     break;
                 }
@@ -489,7 +489,7 @@ public class Enemy_SCR : MonoBehaviour
     public int GetElement() { return (int)mainElement; }
     public int GetHP() { return HP; }
     public int GetDefense() { return DEF; }
-    public void ReceiveDamage(int damage, bool ignoreDefense = false, bool flinchEnemy = false, float shakiness = -1)
+    public void ReceiveDamage(int damage, bool ignoreDefense = false, bool flinchEnemy = false, float shakiness = -1, bool isLucky = false)
     {
         int fullDamage = 0;
         int playerElementNum = BM.GetComponent<BattleManager_SCR>().GetPlayerElement();
@@ -521,6 +521,9 @@ public class Enemy_SCR : MonoBehaviour
         var startColor = HitFX.GetComponent<ParticleSystem>().main;
         HitFX.transform.localScale = new Vector3(fullDamage * 0.25f, fullDamage * 0.25f, 1f);
         startColor.startColor = GetElementColor(playerElementNum);
+
+        GameObject DamageIcon = OtherFunctions.CreateObjectFromResource("Prefabs/DamageIcon_PFB", new Vector3(Obj.transform.position.x, Obj.transform.position.y, -105f));
+        DamageIcon.GetComponent<DamageIcon_SCR>().AssignDamage(fullDamage);
         if (shakiness == -1) { vibration = fullDamage * 2f; }
         else { vibration = shakiness; }
         timeVal = 0f;

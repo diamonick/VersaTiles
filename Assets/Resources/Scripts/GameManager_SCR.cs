@@ -10,9 +10,11 @@ public class GameManager_SCR : MonoBehaviour
 {
     private string[] DescriptionArray = new string[5]
     {
-        "Complete a series of 3 worlds and battle against a variety of tactile enemies.",
-        "Take a look at the enemies you've fought so far.",
-        "See the talented staff involved in the making of VersaTiles.",
+        "Complete a series of enemy waves in turn-based fashion.",
+        //"Take a look at the enemies you've fought so far.",
+        "Not available in prototype version.",
+        "Not available in prototype version.",
+        //"See the talented staff involved in the making of VersaTiles.",
         "Quit the game.",
         "Press any button to join game. Two players are required to continue."
     };
@@ -389,6 +391,7 @@ public class GameManager_SCR : MonoBehaviour
                         {
                             MenuButton[i] = OtherFunctions.CreateObjectFromResource("Prefabs/MenuButton_PFB", new Vector3(-320f, 832f - (i * 144f), 0f));
                             MenuButton[i].GetComponent<MenuButton_SCR>().ChangeSprite("Sprites/MenuButtons", i);
+                            if (i == 1 || i == 2) { MenuButton[i].GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 0.5f); }
                             StartCoroutine(EasingFunctions.TranslateTo(MenuButton[i], new Vector2(MB_StartPosition, MenuButton[i].transform.position.y), 0.5f, 3, Easing.EaseOut));
                             yield return new WaitForSeconds(0.1f);
                         }
@@ -669,7 +672,7 @@ public class GameManager_SCR : MonoBehaviour
                     {
                         for (int i = 0; i < panelArrows.Length; i++)
                         {
-                            panelArrows[i] = OtherFunctions.CreateObjectFromResource("Prefabs/EmptyObject_PFB", new Vector3(400f + ((1120f) * i), 540f, -105f));
+                            panelArrows[i] = OtherFunctions.CreateObjectFromResource("Prefabs/EmptyObject_PFB", new Vector3(320f + ((1280f) * i), 540f, -105f));
                             panelArrows[i].transform.localScale = new Vector3(2f, 2f, 1f);
                             OtherFunctions.ChangeSprite(panelArrows[i], "Sprites/SelectArrow");
                             panelArrows[i].GetComponent<SpriteRenderer>().color = new Color(0f, 138f / 255f, 1f, 1f);

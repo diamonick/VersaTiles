@@ -72,12 +72,12 @@ public class BattleManager_SCR : MonoBehaviour
     private readonly List<List<Enemy>> World1_1_Waves = new List<List<Enemy>>()
     {
         new List<Enemy> { Enemy.Froopa, Enemy.Froopa },
+        new List<Enemy> { Enemy.Froopa, Enemy.Nutbug, Enemy.Froopa },
+        new List<Enemy> { Enemy.Nutbug, Enemy.Nutbug, Enemy.Nutbug },
+        new List<Enemy> { Enemy.Reshroom, Enemy.Froopa, Enemy.Nutbug },
+        new List<Enemy> { Enemy.Froopa, Enemy.Froopa, Enemy.Froopa, Enemy.Froopa },
+        new List<Enemy> { Enemy.Reshroom, Enemy.Reshroom },
         new List<Enemy> { Enemy.Apple }
-        //new List<Enemy> { Enemy.Froopa, Enemy.Nutbug, Enemy.Froopa },
-        //new List<Enemy> { Enemy.Nutbug, Enemy.Nutbug, Enemy.Nutbug },
-        //new List<Enemy> { Enemy.Reshroom, Enemy.Froopa, Enemy.Nutbug },
-        //new List<Enemy> { Enemy.Froopa, Enemy.Froopa, Enemy.Froopa, Enemy.Froopa },
-        //new List<Enemy> { Enemy.Reshroom, Enemy.Reshroom },
     };
     private List<GameObject> WaveNodes = new List<GameObject>();
 
@@ -566,7 +566,7 @@ public class BattleManager_SCR : MonoBehaviour
                         RewardEXP_Text = RewardBox.transform.Find("Canvas/EXP Text").gameObject;
                         RewardEXP_Text.transform.position = RewardBox.transform.position + new Vector3(96f, 0f, -5f);
                         RewardEXP_Text.GetComponent<TMP_Text>().text = $"+{EXP_Reward} EXP";
-                        WriteMessage($"You earned {EXP_Reward}EXP!", true);
+                        WriteMessage($"You earned {EXP_Reward} EXP!", true);
                         timeVal = 1f;
                         break;
                     }
@@ -668,7 +668,7 @@ public class BattleManager_SCR : MonoBehaviour
                         RewardEXP_Text = RewardBox.transform.Find("Canvas/EXP Text").gameObject;
                         RewardEXP_Text.transform.position = RewardBox.transform.position + new Vector3(96f, 0f, -5f);
                         RewardEXP_Text.GetComponent<TMP_Text>().text = $"+{EXP_Reward} EXP";
-                        WriteMessage($"You earned {EXP_Reward}EXP!", true);
+                        WriteMessage($"You earned {EXP_Reward} EXP!", true);
                         timeVal = 1f;
                         break;
                     }
