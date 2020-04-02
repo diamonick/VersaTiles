@@ -542,7 +542,6 @@ public class GameManager_SCR : MonoBehaviour
                     {
                         DarkOverlay.GetComponent<SpriteRenderer>().color = new Color(0f, 0f, 0f, 0f);
                         SceneManager.LoadScene("Resources/Scenes/TitleMenu_SCN");
-                        Bits_PS.GetComponent<ParticleSystem>().Stop();
                         StartCoroutine(EasingFunctions.ColorChangeFromHex(TopOverlay, "#000000", 0.5f, 0f));
                         StartTimeline(TimelineScript.TitleScreenAnimation, 1f);
                         break;
@@ -670,7 +669,8 @@ public class GameManager_SCR : MonoBehaviour
                     {
                         for (int i = 0; i < panelArrows.Length; i++)
                         {
-                            panelArrows[i] = OtherFunctions.CreateObjectFromResource("Prefabs/EmptyObject_PFB", new Vector3(420f + ((540f + 960f) * i), 540f, -105f));
+                            panelArrows[i] = OtherFunctions.CreateObjectFromResource("Prefabs/EmptyObject_PFB", new Vector3(400f + ((1120f) * i), 540f, -105f));
+                            panelArrows[i].transform.localScale = new Vector3(2f, 2f, 1f);
                             OtherFunctions.ChangeSprite(panelArrows[i], "Sprites/SelectArrow");
                             panelArrows[i].GetComponent<SpriteRenderer>().color = new Color(0f, 138f / 255f, 1f, 1f);
                             if (i == 0) { panelArrows[i].transform.rotation = Quaternion.Euler(0f, 180f, 0f); }

@@ -14,7 +14,7 @@ public class StarFX_SCR : MonoBehaviour
     };
     private GameObject Obj;
     private SpriteRenderer SPR;
-    private int index = 0;
+    private float index = 0;
     private float speed = 0f;
 
     private void Awake()
@@ -36,5 +36,5 @@ public class StarFX_SCR : MonoBehaviour
         if (SPR.color.a <= 0f) { Destroy(Obj); }
     }
 
-    public void AssignIndex(int i, float spd) { index = i; speed = spd; }
+    public void AssignIndex(float i, float spd) { index = i; speed = spd; }
 }

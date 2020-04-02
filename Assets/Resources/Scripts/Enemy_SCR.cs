@@ -44,7 +44,8 @@ public class Enemy_SCR : MonoBehaviour
     {
         None = 0,
         Flash,
-        TakenDamage
+        TakenDamage,
+        BossExplosion
     }
     private List<Color> EnemyColor = new List<Color>
     {
@@ -111,6 +112,7 @@ public class Enemy_SCR : MonoBehaviour
     private bool isBadApple = false;
     private bool isFlinched = false;
     private bool isFlinchable = true;
+    private bool bossEnemy = false;
 
     //Timeline Variables
     private int SS_Animation_index = 0;
@@ -161,17 +163,26 @@ public class Enemy_SCR : MonoBehaviour
             SPR.material.color -= new Color(2f * Time.deltaTime, 2f * Time.deltaTime, 2f * Time.deltaTime, 0f);
             if (SPR.material.color.r <= 0f)
             {
-                for (int starCount = 0; starCount < 16; starCount++)
+                if (!bossEnemy)
                 {
-                    float speed = (starCount < 8 ? 12f : 24f);
-                    GameObject Star = OtherFunctions.CreateObjectFromResource("Prefabs/StarFX_PFB", staticPos - new Vector3(0f, 0f, -10f));
-                    Star.GetComponent<StarFX_SCR>().AssignIndex(starCount, speed);
+                    for (int starCount = 0; starCount < 16; starCount++)
+                    {
+                        float speed = (starCount < 8 ? 12f : 24f);
+                        GameObject Star = OtherFunctions.CreateObjectFromResource("Prefabs/StarFX_PFB", staticPos - new Vector3(0f, 0f, -10f));
+                        Star.GetComponent<StarFX_SCR>().AssignIndex(starCount, speed);
 
+                    }
+                    BM.GetComponent<BattleManager_SCR>().AddEXP(EXP);
+                    Destroy(TurnCounter);
+                    Destroy(StatsBar);
+                    Destroy(Obj);
                 }
-                BM.GetComponent<BattleManager_SCR>().AddEXP(EXP);
-                Destroy(TurnCounter);
-                Destroy(StatsBar);
-                Destroy(Obj);
+                else
+                {
+                    timeline_running = true;
+                    timeVal = 0f;
+                    TLS = TimelineScript.BossExplosion;
+                }
             }
         }
 
@@ -226,6 +237,36 @@ public class Enemy_SCR : MonoBehaviour
                             BM.GetComponent<BattleManager_SCR>().ClearMessage();
                             Destroy(Selection);
                         }
+                        break;
+                    }
+            }
+        }
+        else if (timelinescript == TimelineScript.BossExplosion)
+        {
+            SS_Animation_index++;
+            switch (SS_Animation_index)
+            {
+                case 1:
+                    {
+                        float i = 0f;
+                        for (int starCount = 0; starCount < 144; starCount++)
+                        {
+                            float speed = (starCount < 8 ? 12f : 24f);
+                            float size = UnityEngine.Random.Range(1f, 5f);
+                            GameObject Star = OtherFunctions.CreateObjectFromResource("Prefabs/StarFX_PFB", staticPos - new Vector3(0f, 0f, -10f));
+                            Star.transform.localScale = new Vector3(size, size, 1f);
+                            Star.GetComponent<StarFX_SCR>().AssignIndex((float)starCount + i, speed);
+                            if (starCount % 16 == 0 && starCount != 0) { yield return new WaitForSeconds(0.18f); i += 0.5f; }
+                        }
+                        timeVal = 2.5f;
+                        break;
+                    }
+                case 2:
+                    {
+                        BM.GetComponent<BattleManager_SCR>().AddEXP(EXP);
+                        Destroy(TurnCounter);
+                        Destroy(StatsBar);
+                        Destroy(Obj);
                         break;
                     }
             }
@@ -289,7 +330,7 @@ public class Enemy_SCR : MonoBehaviour
             //Snapple
             case 4:
                 {
-                    EnemyStats("Snapple", Element.Wood, 40, 40, 4, 1, 48, 2, Enemy.Snapple, EnemyColor[3]);
+                    EnemyStats("Snapple", Element.Wood, 40, 40, 4, 1, 48, 2, Enemy.Snapple, EnemyColor[3], true);
                     break;
                 }
             //Eye Dye 1
@@ -345,7 +386,7 @@ public class Enemy_SCR : MonoBehaviour
                 }
         }
     }
-    private void EnemyStats(string eName, Element element, int hp, int maxhp, int atk, int def, int exp, int turnNum, Enemy eType, Color barColor)
+    private void EnemyStats(string eName, Element element, int hp, int maxhp, int atk, int def, int exp, int turnNum, Enemy eType, Color barColor, bool isBossEnemy = false)
     {
         enemyName = eName;
         EnemyName_Text.GetComponent<TMP_Text>().text = eName;
@@ -360,6 +401,7 @@ public class Enemy_SCR : MonoBehaviour
         EXP = exp;
         turnsLeft = turnNum;
         enemyType = eType;
+        bossEnemy = isBossEnemy;
         StatsBar.GetComponent<SpriteRenderer>().color = barColor;
         TurnCounter.GetComponent<SpriteRenderer>().color = new Color(1f, 126f / 255f, 0f);
     }
@@ -450,7 +492,8 @@ public class Enemy_SCR : MonoBehaviour
     public void ReceiveDamage(int damage, bool ignoreDefense = false, bool flinchEnemy = false, float shakiness = -1)
     {
         int fullDamage = 0;
-        float elementMultiplier = DamageMultiplier[BM.GetComponent<BattleManager_SCR>().GetPlayerElement(), (int)mainElement];
+        int playerElementNum = BM.GetComponent<BattleManager_SCR>().GetPlayerElement();
+        float elementMultiplier = DamageMultiplier[playerElementNum, (int)mainElement];
 
         if (!ignoreDefense) { fullDamage = Mathf.Max(fullDamage, 0, (int)(damage * elementMultiplier) - DEF); }
         else { fullDamage = Mathf.Max(fullDamage, 0, (int)(damage)); }
@@ -474,6 +517,10 @@ public class Enemy_SCR : MonoBehaviour
         {
             if (AilmentList[i] == StatusAilment.Sleep) { damagedInSleep = true; break; }
         }
+        GameObject HitFX = OtherFunctions.CreateObjectFromResource("Prefabs/Hit_PFX", new Vector3(Obj.transform.position.x, Obj.transform.position.y, -500f));
+        var startColor = HitFX.GetComponent<ParticleSystem>().main;
+        HitFX.transform.localScale = new Vector3(fullDamage * 0.25f, fullDamage * 0.25f, 1f);
+        startColor.startColor = GetElementColor(playerElementNum);
         if (shakiness == -1) { vibration = fullDamage * 2f; }
         else { vibration = shakiness; }
         timeVal = 0f;
@@ -565,6 +612,21 @@ public class Enemy_SCR : MonoBehaviour
 
         finalDamage = (int)(baseDamage * elementMultiplier * luckyMultiplier);
         StartCoroutine(BM.GetComponent<BattleManager_SCR>().ReceiveDamage(finalDamage));
+    }
+
+    private Color GetElementColor(int colorNum)
+    {
+        switch (colorNum)
+        {
+            case 0: { return new Color(218f / 255f, 218f / 255f, 218f / 255f, 1f); }
+            case 1: { return new Color(1f, 144f / 255f, 0f, 1f); }
+            case 2: { return new Color(0f, 156f / 255f, 1f, 1f); }
+            case 3: { return new Color(1f, 234f / 255f, 0f, 1f); }
+            case 4: { return new Color(21f / 255f, 222f / 255f, 0f, 1f); }
+            case 5: { return new Color(1f, 238f / 255f, 170f / 255f, 1f); }
+            case 6: { return new Color(106f / 255f, 0f, 196f / 255f, 1f); }
+            default: { return new Color(1f, 1f, 1f, 1f); }
+        }
     }
 
     private void WriteMessage(string msg, bool typewriterMode) { BM.GetComponent<BattleManager_SCR>().WriteMessage(msg, typewriterMode); }
@@ -712,6 +774,7 @@ public class Enemy_SCR : MonoBehaviour
         for (int tries = 0; tries < numOfHits; tries++)
         {
             DealDamage(1, 5*tries);
+            ClearMessage();
             yield return new WaitForSeconds(0.2f);
         }
         WriteMessage($"It landed {numOfHits} hits!", true);

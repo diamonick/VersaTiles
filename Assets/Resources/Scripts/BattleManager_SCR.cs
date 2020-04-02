@@ -72,12 +72,12 @@ public class BattleManager_SCR : MonoBehaviour
     private readonly List<List<Enemy>> World1_1_Waves = new List<List<Enemy>>()
     {
         new List<Enemy> { Enemy.Froopa, Enemy.Froopa },
-        new List<Enemy> { Enemy.Froopa, Enemy.Nutbug, Enemy.Froopa },
-        new List<Enemy> { Enemy.Nutbug, Enemy.Nutbug, Enemy.Nutbug },
-        new List<Enemy> { Enemy.Reshroom, Enemy.Froopa, Enemy.Nutbug },
-        new List<Enemy> { Enemy.Froopa, Enemy.Froopa, Enemy.Froopa, Enemy.Froopa },
-        new List<Enemy> { Enemy.Reshroom, Enemy.Reshroom },
         new List<Enemy> { Enemy.Apple }
+        //new List<Enemy> { Enemy.Froopa, Enemy.Nutbug, Enemy.Froopa },
+        //new List<Enemy> { Enemy.Nutbug, Enemy.Nutbug, Enemy.Nutbug },
+        //new List<Enemy> { Enemy.Reshroom, Enemy.Froopa, Enemy.Nutbug },
+        //new List<Enemy> { Enemy.Froopa, Enemy.Froopa, Enemy.Froopa, Enemy.Froopa },
+        //new List<Enemy> { Enemy.Reshroom, Enemy.Reshroom },
     };
     private List<GameObject> WaveNodes = new List<GameObject>();
 
@@ -654,7 +654,7 @@ public class BattleManager_SCR : MonoBehaviour
                         LevelClearedPrompt = OtherFunctions.CreateObjectFromResource("Prefabs/EmptyObject_PFB", new Vector3(BoardPos.x + 254f, BoardPos.y - 320f, -500f));
                         LevelClearedPrompt.AddComponent<LevelCleared_SCR>();
                         WriteMessage($"Congrats! You defeated the boss and cleared all waves!", true);
-                        timeVal = 2f;
+                        timeVal = 4f;
                         break;
                     }
                 case 2:
@@ -1495,7 +1495,9 @@ public class BattleManager_SCR : MonoBehaviour
 
         if (specialQuoteRNG > 4f)
         {
-            if (enemyName == "Eye Dye") { return $"The {enemyName} died of chance!"; }
+            if (enemyName == "Froopa") { return $"The {enemyName} got squished like a bug!"; }
+            if (enemyName == "Nutbug") { return $"The {enemyName} got cracked!"; }
+            else if (enemyName == "Eye Dye") { return $"The {enemyName} died of chance!"; }
             else if (enemyName == "Devol") { return $"The {enemyName} lost his love for revenge!"; }
         }
 
