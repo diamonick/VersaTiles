@@ -14,11 +14,12 @@ public class PanBackground_SCR : MonoBehaviour
     [SerializeField] private float bkgWidth;
     private bool isScrolling = false;
     [SerializeField] private Scroll ScrollDir = Scroll.Right;
+    [SerializeField] private bool startScroll = false;
     private float timeVal = 0f;
     private float panTime = 30f;
 
     // Start is called before the first frame update
-    void Start()
+    private void Awake()
     {
         Obj = this.gameObject;
         Obj.transform.position = new Vector3(0f, 540f, 100f);
@@ -28,27 +29,33 @@ public class PanBackground_SCR : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (timeVal > 0f) { timeVal -= 1 * Time.deltaTime; }
-        else
+        if (startScroll)
         {
-            isScrolling = false;
-            timeVal = panTime;
-
-            if (!isScrolling)
+            if (timeVal > 0f) { timeVal -= 1 * Time.deltaTime; }
+            else
             {
-                Vector3 currentPos = Obj.transform.position;
-                ScrollDir = (ScrollDir == Scroll.Right ? Scroll.Left : Scroll.Right);
-                isScrolling = true;
+                bkgWidth = Obj.GetComponent<SpriteRenderer>().bounds.size.x;
+                isScrolling = false;
+                timeVal = panTime;
 
-                if (ScrollDir == Scroll.Right)
+                if (!isScrolling)
                 {
-                    StartCoroutine(EasingFunctions.TranslateTo(Obj, currentPos - new Vector3(bkgWidth / 4f, 0f, 0f), panTime, 2, Easing.EaseInOut));
-                }
-                else if (ScrollDir == Scroll.Left)
-                {
-                    StartCoroutine(EasingFunctions.TranslateTo(Obj, currentPos + new Vector3(bkgWidth / 4f, 0f, 0f), panTime, 2, Easing.EaseInOut));
+                    Vector3 currentPos = Obj.transform.position;
+                    ScrollDir = (ScrollDir == Scroll.Right ? Scroll.Left : Scroll.Right);
+                    isScrolling = true;
+
+                    if (ScrollDir == Scroll.Right)
+                    {
+                        StartCoroutine(EasingFunctions.TranslateTo(Obj, currentPos - new Vector3(bkgWidth / 4f, 0f, 0f), panTime, 2, Easing.EaseInOut));
+                    }
+                    else if (ScrollDir == Scroll.Left)
+                    {
+                        StartCoroutine(EasingFunctions.TranslateTo(Obj, currentPos + new Vector3(bkgWidth / 4f, 0f, 0f), panTime, 2, Easing.EaseInOut));
+                    }
                 }
             }
         }
     }
+
+    public void ActivateScroll() { startScroll = true; }
 }

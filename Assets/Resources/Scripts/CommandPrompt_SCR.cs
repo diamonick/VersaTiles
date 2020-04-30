@@ -36,6 +36,8 @@ public class CommandPrompt_SCR : MonoBehaviour
         Cost_Text.transform.position = Obj.transform.position + new Vector3(-108f, -90f, -1f);
         Affects_Text.transform.position = Obj.transform.position + new Vector3(-108f, -130f, -1f);
         Rarity_Text.transform.position = Obj.transform.position + new Vector3(-108f, -170f, -1f);
+
+        GameManager_SCR.PlaySound(10);
     }
 
     // Update is called once per frame

@@ -41,6 +41,15 @@ TextureImporter:
   - first:
       213: 1562580684461244233
     second: InstructionPanels_12
+  - first:
+      213: 9056120681853719236
+    second: InstructionPanels_13
+  - first:
+      213: 5754956518825627315
+    second: InstructionPanels_14
+  - first:
+      213: 4289581744839558721
+    second: InstructionPanels_15
   externalObjects: {}
   serializedVersion: 10
   mipmaps:
@@ -99,7 +108,7 @@ TextureImporter:
   platformSettings:
   - serializedVersion: 3
     buildTarget: DefaultTexturePlatform
-    maxTextureSize: 8192
+    maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
     textureCompression: 2
@@ -111,7 +120,7 @@ TextureImporter:
     forceMaximumCompressionQuality_BC6H_BC7: 0
   - serializedVersion: 3
     buildTarget: Standalone
-    maxTextureSize: 8192
+    maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
     textureCompression: 2
@@ -393,6 +402,69 @@ TextureImporter:
       bones: []
       spriteID: 94ff2368ad66fa510800000000000000
       internalID: 1562580684461244233
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InstructionPanels_13
+      rect:
+        serializedVersion: 2
+        x: 1031
+        y: 0
+        width: 1031
+        height: 941
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4c295fc57cdcdad70800000000000000
+      internalID: 9056120681853719236
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InstructionPanels_14
+      rect:
+        serializedVersion: 2
+        x: 2062
+        y: 0
+        width: 1031
+        height: 941
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3be8b6a7676bddf40800000000000000
+      internalID: 5754956518825627315
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InstructionPanels_15
+      rect:
+        serializedVersion: 2
+        x: 3093
+        y: 0
+        width: 1031
+        height: 941
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1468928aed7a78b30800000000000000
+      internalID: 4289581744839558721
       vertices: []
       indices: 
       edges: []

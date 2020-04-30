@@ -62,6 +62,24 @@ TextureImporter:
   - first:
       213: 8812383484999701711
     second: PlayTiles_19
+  - first:
+      213: 8875924564067473247
+    second: PlayTiles_20
+  - first:
+      213: 2073305385301393061
+    second: PlayTiles_21
+  - first:
+      213: -7276692576802196680
+    second: PlayTiles_22
+  - first:
+      213: -6273595685212919770
+    second: PlayTiles_23
+  - first:
+      213: -2462135869640300606
+    second: PlayTiles_24
+  - first:
+      213: -3766875755969889793
+    second: PlayTiles_25
   externalObjects: {}
   serializedVersion: 10
   mipmaps:
@@ -150,7 +168,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 448
+        y: 672
         width: 104
         height: 112
       alignment: 0
@@ -171,7 +189,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 104
-        y: 448
+        y: 672
         width: 104
         height: 112
       alignment: 0
@@ -192,7 +210,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 208
-        y: 448
+        y: 672
         width: 104
         height: 112
       alignment: 0
@@ -213,7 +231,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 312
-        y: 448
+        y: 672
         width: 104
         height: 112
       alignment: 0
@@ -234,7 +252,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 336
+        y: 560
         width: 104
         height: 112
       alignment: 0
@@ -255,7 +273,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 104
-        y: 336
+        y: 560
         width: 104
         height: 112
       alignment: 0
@@ -276,7 +294,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 208
-        y: 336
+        y: 560
         width: 104
         height: 112
       alignment: 0
@@ -297,7 +315,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 312
-        y: 336
+        y: 560
         width: 104
         height: 112
       alignment: 0
@@ -318,7 +336,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 224
+        y: 448
         width: 104
         height: 112
       alignment: 0
@@ -339,7 +357,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 104
-        y: 224
+        y: 448
         width: 104
         height: 112
       alignment: 0
@@ -360,7 +378,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 208
-        y: 224
+        y: 448
         width: 104
         height: 112
       alignment: 0
@@ -381,7 +399,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 312
-        y: 224
+        y: 448
         width: 104
         height: 112
       alignment: 0
@@ -402,7 +420,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 112
+        y: 336
         width: 104
         height: 112
       alignment: 0
@@ -423,7 +441,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 104
-        y: 112
+        y: 336
         width: 104
         height: 112
       alignment: 0
@@ -444,7 +462,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 208
-        y: 112
+        y: 336
         width: 104
         height: 112
       alignment: 0
@@ -465,7 +483,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 312
-        y: 112
+        y: 336
         width: 104
         height: 112
       alignment: 0
@@ -486,7 +504,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 0
+        y: 224
         width: 104
         height: 112
       alignment: 0
@@ -507,7 +525,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 104
-        y: 0
+        y: 224
         width: 104
         height: 112
       alignment: 0
@@ -528,7 +546,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 208
-        y: 0
+        y: 224
         width: 104
         height: 112
       alignment: 0
@@ -549,7 +567,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 312
-        y: 0
+        y: 224
         width: 104
         height: 112
       alignment: 0
@@ -561,6 +579,132 @@ TextureImporter:
       bones: []
       spriteID: fc41defe610eb4a70800000000000000
       internalID: 8812383484999701711
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PlayTiles_20
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 112
+        width: 104
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f57d7664d5e9d2b70800000000000000
+      internalID: 8875924564067473247
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PlayTiles_21
+      rect:
+        serializedVersion: 2
+        x: 104
+        y: 112
+        width: 104
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5ae3bc9534cd5cc10800000000000000
+      internalID: 2073305385301393061
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PlayTiles_22
+      rect:
+        serializedVersion: 2
+        x: 208
+        y: 112
+        width: 104
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 833bbfba7aef30b90800000000000000
+      internalID: -7276692576802196680
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PlayTiles_23
+      rect:
+        serializedVersion: 2
+        x: 312
+        y: 112
+        width: 104
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 628e57696f5bfe8a0800000000000000
+      internalID: -6273595685212919770
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PlayTiles_24
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 104
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2c7a755b87cb4ddd0800000000000000
+      internalID: -2462135869640300606
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PlayTiles_25
+      rect:
+        serializedVersion: 2
+        x: 104
+        y: 0
+        width: 104
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ff9326c257e59bbc0800000000000000
+      internalID: -3766875755969889793
       vertices: []
       indices: 
       edges: []

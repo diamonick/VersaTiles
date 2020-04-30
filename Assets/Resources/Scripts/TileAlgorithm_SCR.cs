@@ -17,8 +17,10 @@ public class TileAlgorithm_SCR : MonoBehaviour
     private int ATKPlus4_Count = 0;
     private int MulATKPlus1_Count = 0;
     private int MulATKPlus2_Count = 0;
+    private int Guard_Count = 0;
     private int HPPlus5_Count = 0;
     private int CPPlus1_Count = 0;
+    private int CPPlus2_Count = 0;
     private int CmdItem_Count = 0;
     private int Mul_Count = 0;
     private int ElementSwap_Count = 0;
@@ -31,8 +33,10 @@ public class TileAlgorithm_SCR : MonoBehaviour
         ATKPlus4,       // Attack +4
         MulATKPlus1,    // Multi-Attack +1
         MulATKPlus2,    // Multi-Attack +2
+        Guard,          // Guard
         HPPlus5,        // Heart Points +5
         CPPlus1,        // Command Points +1
+        CPPlus2,        // Command Points +2
         CmdItem,        // Command Item
         Mul2,           // x2
         Mul3,           // x3
@@ -41,17 +45,19 @@ public class TileAlgorithm_SCR : MonoBehaviour
     [SerializeField]
     private readonly List<Tile> Tiles = new List<Tile>()
     {
-        Tile.ATKPlus1, Tile.ATKPlus1, Tile.ATKPlus1, Tile.ATKPlus1, Tile.ATKPlus1, Tile.ATKPlus1, Tile.ATKPlus1, Tile.ATKPlus1, Tile.ATKPlus1, Tile.ATKPlus1, Tile.ATKPlus1, Tile.ATKPlus1, Tile.ATKPlus1, Tile.ATKPlus1, Tile.ATKPlus1, Tile.ATKPlus1,
-        Tile.ATKPlus2, Tile.ATKPlus2, Tile.ATKPlus2, Tile.ATKPlus2, Tile.ATKPlus2, Tile.ATKPlus2, Tile.ATKPlus2, Tile.ATKPlus2, Tile.ATKPlus2, Tile.ATKPlus2, Tile.ATKPlus2, Tile.ATKPlus2, Tile.ATKPlus2, Tile.ATKPlus2, Tile.ATKPlus2, Tile.ATKPlus2,
-        Tile.ATKPlus3, Tile.ATKPlus3, Tile.ATKPlus3, Tile.ATKPlus3, Tile.ATKPlus3, Tile.ATKPlus3,
-        Tile.ATKPlus4, Tile.ATKPlus4, Tile.ATKPlus4, Tile.ATKPlus4, Tile.ATKPlus4, Tile.ATKPlus4,
+        Tile.ATKPlus1, Tile.ATKPlus1, Tile.ATKPlus1, Tile.ATKPlus1, Tile.ATKPlus1, Tile.ATKPlus1, Tile.ATKPlus1, Tile.ATKPlus1, Tile.ATKPlus1, Tile.ATKPlus1, Tile.ATKPlus1, Tile.ATKPlus1, Tile.ATKPlus1, Tile.ATKPlus1,
+        Tile.ATKPlus2, Tile.ATKPlus2, Tile.ATKPlus2, Tile.ATKPlus2, Tile.ATKPlus2, Tile.ATKPlus2, Tile.ATKPlus2, Tile.ATKPlus2, Tile.ATKPlus2, Tile.ATKPlus2, Tile.ATKPlus2, Tile.ATKPlus2, Tile.ATKPlus2, Tile.ATKPlus2,
+        Tile.ATKPlus3, Tile.ATKPlus3, Tile.ATKPlus3, Tile.ATKPlus3,
+        Tile.ATKPlus4, Tile.ATKPlus4, Tile.ATKPlus4, Tile.ATKPlus4,
         Tile.MulATKPlus1, Tile.MulATKPlus1, Tile.MulATKPlus1, Tile.MulATKPlus2, Tile.MulATKPlus2, Tile.MulATKPlus2,
-        Tile.HPPlus5, Tile.HPPlus5,
+        Tile.Guard, Tile.Guard,
+        Tile.HPPlus5, Tile.HPPlus5, Tile.HPPlus5, Tile.HPPlus5,
         Tile.CPPlus1, Tile.CPPlus1, Tile.CPPlus1, Tile.CPPlus1, Tile.CPPlus1, Tile.CPPlus1,
+        Tile.CPPlus2, Tile.CPPlus2, Tile.CPPlus2,
         Tile.CmdItem, Tile.CmdItem, Tile.CmdItem,
         Tile.Mul2,
         Tile.Mul2,
-        Tile.ElementSwap
+        Tile.ElementSwap, Tile.ElementSwap
     };
     private List<List<Tile>> GridSequence = new List<List<Tile>>();
 
@@ -82,14 +88,16 @@ public class TileAlgorithm_SCR : MonoBehaviour
         gridTiles.AddRange(Tiles);
         ShuffleAllTiles(ref gridTiles);
 
-        int ATKPlus1_MAX = 8;       //Max # of Attack +1 Tiles
-        int ATKPlus2_MAX = 8;       //Max # of Attack +2 Tiles
-        int ATKPlus3_MAX = 3;       //Max # of Attack +3 Tiles
-        int ATKPlus4_MAX = 3;       //Max # of Attack +4 Tiles
-        int MulATKPlus1_MAX = 3;       //Max # of Multi-Attack +1 Tiles
-        int MulATKPlus2_MAX = 3;       //Max # of Multi-Attack +2 Tiles
-        int HPPlus5_MAX = 1;        //Max # of HP +5 Tiles
+        int ATKPlus1_MAX = 7;       //Max # of Attack +1 Tiles
+        int ATKPlus2_MAX = 7;       //Max # of Attack +2 Tiles
+        int ATKPlus3_MAX = 2;       //Max # of Attack +3 Tiles
+        int ATKPlus4_MAX = 2;       //Max # of Attack +4 Tiles
+        int MulATKPlus1_MAX = 2;    //Max # of Multi-Attack +1 Tiles
+        int MulATKPlus2_MAX = 2;    //Max # of Multi-Attack +2 Tiles
+        int Guard_MAX = 1;          //Max # of Guard Tiles
+        int HPPlus5_MAX = 2;        //Max # of HP +5 Tiles
         int CPPlus1_MAX = 3;        //Max # of CP +1 Tiles
+        int CPPlus2_MAX = 2;        //Max # of CP +2 Tiles
         int CmdItem_MAX = 2;        //Max # of Command Tiles
         int Mul_MAX = 1;            //Max # of Multiplier Tiles
         int ElementSwap_MAX = 1;    //Max # of Element Swap Tiles
@@ -115,10 +123,14 @@ public class TileAlgorithm_SCR : MonoBehaviour
                 else if (firstTile == Tile.MulATKPlus1) { ViolatedRule = CheckViolatedRule(ref MulATKPlus1_Count, ref NonPlusTile_Count, MulATKPlus1_MAX, false); }
                 //Tile is Multi-Attack +2 Tile
                 else if (firstTile == Tile.MulATKPlus2) { ViolatedRule = CheckViolatedRule(ref MulATKPlus2_Count, ref NonPlusTile_Count, MulATKPlus2_MAX, false); }
+                //Tile is Guard Tile
+                else if (firstTile == Tile.Guard) { ViolatedRule = CheckViolatedRule(ref Guard_Count, ref NonPlusTile_Count, Guard_MAX, false); }
                 //Tile is HP +5 Tile
                 else if (firstTile == Tile.HPPlus5) { ViolatedRule = CheckViolatedRule(ref HPPlus5_Count, ref NonPlusTile_Count, HPPlus5_MAX, false); }
                 //Tile is CP +1 Tile
                 else if (firstTile == Tile.CPPlus1) { ViolatedRule = CheckViolatedRule(ref CPPlus1_Count, ref NonPlusTile_Count, CPPlus1_MAX, false); }
+                //Tile is CP +2 Tile
+                else if (firstTile == Tile.CPPlus2) { ViolatedRule = CheckViolatedRule(ref CPPlus2_Count, ref NonPlusTile_Count, CPPlus2_MAX, false); }
                 //Tile is Command Tile
                 else if (firstTile == Tile.CmdItem) { ViolatedRule = CheckViolatedRule(ref CmdItem_Count, ref NonPlusTile_Count, CmdItem_MAX, false); }
                 //Tile is x2 Tile
@@ -150,8 +162,10 @@ public class TileAlgorithm_SCR : MonoBehaviour
                 int ATKPlus4_Leftovers = 0;
                 int MulATKPlus1_Leftovers = 0;
                 int MulATKPlus2_Leftovers = 0;
+                int Guard_Leftovers = 0;
                 int HPPlus5_Leftovers = 0;
                 int CPPlus1_Leftovers = 0;
+                int CPPlus2_Leftovers = 0;
                 int CmdItem_Leftovers = 0;
                 int Mul_Leftovers = 0;
                 int ElementSwap_Leftovers = 0;
@@ -164,8 +178,10 @@ public class TileAlgorithm_SCR : MonoBehaviour
                     ATKPlus4_Leftovers = 0;
                     MulATKPlus1_Leftovers = 0;
                     MulATKPlus2_Leftovers = 0;
+                    Guard_Leftovers = 0;
                     HPPlus5_Leftovers = 0;
                     CPPlus1_Leftovers = 0;
+                    CPPlus2_Leftovers = 0;
                     CmdItem_Leftovers = 0;
                     Mul_Leftovers = 0;
                     ElementSwap_Leftovers = 0;
@@ -178,8 +194,10 @@ public class TileAlgorithm_SCR : MonoBehaviour
                         else if (tile == Tile.ATKPlus4) { ATKPlus4_Leftovers++; }
                         else if (tile == Tile.MulATKPlus1) { MulATKPlus1_Leftovers++; }
                         else if (tile == Tile.MulATKPlus2) { MulATKPlus2_Leftovers++; }
+                        else if (tile == Tile.Guard) { Guard_Leftovers++; }
                         else if (tile == Tile.HPPlus5) { HPPlus5_Leftovers++; }
                         else if (tile == Tile.CPPlus1) { CPPlus1_Leftovers++; }
+                        else if (tile == Tile.CPPlus2) { CPPlus2_Leftovers++; }
                         else if (tile == Tile.CmdItem) { CmdItem_Leftovers++; }
                         else if (tile == Tile.Mul2) { Mul_Leftovers++; }
                         else if (tile == Tile.Mul3) { Mul_Leftovers++; }
@@ -287,13 +305,15 @@ public class TileAlgorithm_SCR : MonoBehaviour
                     {
                         for (int n = 0; n < 16; n++)
                         {
-                            if (grid[n] == Tile.MulATKPlus2 || grid[n] == Tile.HPPlus5 || grid[n] == Tile.CPPlus1 || grid[n] == Tile.CmdItem || grid[n] == Tile.Mul2 || grid[n] == Tile.Mul3 || grid[n] == Tile.ElementSwap)
+                            if (grid[n] == Tile.MulATKPlus2 || grid[n] == Tile.Guard || grid[n] == Tile.HPPlus5 || grid[n] == Tile.CPPlus1 || grid[n] == Tile.CPPlus2 || grid[n] == Tile.CmdItem || grid[n] == Tile.Mul2 || grid[n] == Tile.Mul3 || grid[n] == Tile.ElementSwap)
                             {
                                 Tile replacementTile = gridTiles[gridTiles.IndexOf(Tile.MulATKPlus1)];
 
                                 if (grid[n] == Tile.MulATKPlus2) { MulATKPlus2_Leftovers++; }
+                                if (grid[n] == Tile.Guard) { Guard_Leftovers++; }
                                 if (grid[n] == Tile.HPPlus5) { HPPlus5_Leftovers++; }
                                 if (grid[n] == Tile.CPPlus1) { CPPlus1_Leftovers++; }
+                                if (grid[n] == Tile.CPPlus2) { CPPlus2_Leftovers++; }
                                 if (grid[n] == Tile.CmdItem) { CmdItem_Leftovers++; }
                                 if (grid[n] == Tile.Mul2) { Mul_Leftovers++; }
                                 if (grid[n] == Tile.Mul3) { Mul_Leftovers++; }
@@ -315,13 +335,15 @@ public class TileAlgorithm_SCR : MonoBehaviour
                     {
                         for (int n = 0; n < 16; n++)
                         {
-                            if (grid[n] == Tile.MulATKPlus1 || grid[n] == Tile.HPPlus5 || grid[n] == Tile.CPPlus1 || grid[n] == Tile.CmdItem || grid[n] == Tile.Mul2 || grid[n] == Tile.Mul3 || grid[n] == Tile.ElementSwap)
+                            if (grid[n] == Tile.MulATKPlus1 || grid[n] == Tile.Guard || grid[n] == Tile.HPPlus5 || grid[n] == Tile.CPPlus1 || grid[n] == Tile.CPPlus2 || grid[n] == Tile.CmdItem || grid[n] == Tile.Mul2 || grid[n] == Tile.Mul3 || grid[n] == Tile.ElementSwap)
                             {
                                 Tile replacementTile = gridTiles[gridTiles.IndexOf(Tile.MulATKPlus2)];
 
                                 if (grid[n] == Tile.MulATKPlus1) { MulATKPlus1_Leftovers++; }
+                                if (grid[n] == Tile.Guard) { Guard_Leftovers++; }
                                 if (grid[n] == Tile.HPPlus5) { HPPlus5_Leftovers++; }
                                 if (grid[n] == Tile.CPPlus1) { CPPlus1_Leftovers++; }
+                                if (grid[n] == Tile.CPPlus2) { CPPlus2_Leftovers++; }
                                 if (grid[n] == Tile.CmdItem) { CmdItem_Leftovers++; }
                                 if (grid[n] == Tile.Mul2) { Mul_Leftovers++; }
                                 if (grid[n] == Tile.Mul3) { Mul_Leftovers++; }
@@ -338,18 +360,50 @@ public class TileAlgorithm_SCR : MonoBehaviour
                             break;
                         }
                     }
+                    //Replaces a tile with a Guard Tile if there are more than 2 tiles of this type in setup list
+                    while (Guard_Leftovers > Guard_MAX)
+                    {
+                        for (int n = 0; n < 16; n++)
+                        {
+                            if (grid[n] == Tile.MulATKPlus1 || grid[n] == Tile.MulATKPlus2 || grid[n] == Tile.CPPlus1 || grid[n] == Tile.CPPlus2 || grid[n] == Tile.CmdItem || grid[n] == Tile.Mul2 || grid[n] == Tile.Mul3 || grid[n] == Tile.ElementSwap)
+                            {
+                                Tile replacementTile = gridTiles[gridTiles.IndexOf(Tile.Guard)];
+
+                                if (grid[n] == Tile.MulATKPlus1) { MulATKPlus1_Leftovers++; }
+                                if (grid[n] == Tile.MulATKPlus2) { MulATKPlus2_Leftovers++; }
+                                if (grid[n] == Tile.HPPlus5) { HPPlus5_Leftovers++; }
+                                if (grid[n] == Tile.CPPlus1) { CPPlus1_Leftovers++; }
+                                if (grid[n] == Tile.CPPlus2) { CPPlus2_Leftovers++; }
+                                if (grid[n] == Tile.CmdItem) { CmdItem_Leftovers++; }
+                                if (grid[n] == Tile.Mul2) { Mul_Leftovers++; }
+                                if (grid[n] == Tile.Mul3) { Mul_Leftovers++; }
+                                if (grid[n] == Tile.ElementSwap) { ElementSwap_Leftovers++; }
+
+                                grid.Add(replacementTile);
+                                gridTiles.Add(grid[n]);
+                                grid.RemoveAt(n);
+                                gridTiles.RemoveAt(gridTiles.IndexOf(Tile.Guard));
+                                Guard_Leftovers--;
+                            }
+                            else { continue; }
+
+                            break;
+                        }
+                    }
                     //Replaces a tile with a HP +5 Tile if there are more than 2 tiles of this type in setup list
                     while (HPPlus5_Leftovers > HPPlus5_MAX)
                     {
                         for (int n = 0; n < 16; n++)
                         {
-                            if (grid[n] == Tile.MulATKPlus1 || grid[n] == Tile.MulATKPlus2 || grid[n] == Tile.CPPlus1 || grid[n] == Tile.CmdItem || grid[n] == Tile.Mul2 || grid[n] == Tile.Mul3 || grid[n] == Tile.ElementSwap)
+                            if (grid[n] == Tile.MulATKPlus1 || grid[n] == Tile.MulATKPlus2 || grid[n] == Tile.Guard || grid[n] == Tile.CPPlus1 || grid[n] == Tile.CPPlus2 || grid[n] == Tile.CmdItem || grid[n] == Tile.Mul2 || grid[n] == Tile.Mul3 || grid[n] == Tile.ElementSwap)
                             {
                                 Tile replacementTile = gridTiles[gridTiles.IndexOf(Tile.HPPlus5)];
 
                                 if (grid[n] == Tile.MulATKPlus1) { MulATKPlus1_Leftovers++; }
                                 if (grid[n] == Tile.MulATKPlus2) { MulATKPlus2_Leftovers++; }
+                                if (grid[n] == Tile.Guard) { Guard_Leftovers++; }
                                 if (grid[n] == Tile.CPPlus1) { CPPlus1_Leftovers++; }
+                                if (grid[n] == Tile.CPPlus2) { CPPlus2_Leftovers++; }
                                 if (grid[n] == Tile.CmdItem) { CmdItem_Leftovers++; }
                                 if (grid[n] == Tile.Mul2) { Mul_Leftovers++; }
                                 if (grid[n] == Tile.Mul3) { Mul_Leftovers++; }
@@ -371,13 +425,15 @@ public class TileAlgorithm_SCR : MonoBehaviour
                     {
                         for (int n = 0; n < 16; n++)
                         {
-                            if (grid[n] == Tile.MulATKPlus1 || grid[n] == Tile.MulATKPlus2 || grid[n] == Tile.HPPlus5 || grid[n] == Tile.CmdItem || grid[n] == Tile.Mul2 || grid[n] == Tile.Mul3 || grid[n] == Tile.ElementSwap)
+                            if (grid[n] == Tile.MulATKPlus1 || grid[n] == Tile.MulATKPlus2 || grid[n] == Tile.Guard || grid[n] == Tile.HPPlus5 || grid[n] == Tile.CPPlus2 || grid[n] == Tile.CmdItem || grid[n] == Tile.Mul2 || grid[n] == Tile.Mul3 || grid[n] == Tile.ElementSwap)
                             {
                                 Tile replacementTile = gridTiles[gridTiles.IndexOf(Tile.CPPlus1)];
 
                                 if (grid[n] == Tile.MulATKPlus1) { MulATKPlus1_Leftovers++; }
                                 if (grid[n] == Tile.MulATKPlus2) { MulATKPlus2_Leftovers++; }
+                                if (grid[n] == Tile.Guard) { Guard_Leftovers++; }
                                 if (grid[n] == Tile.HPPlus5) { HPPlus5_Leftovers++; }
+                                if (grid[n] == Tile.CPPlus2) { CPPlus2_Leftovers++; }
                                 if (grid[n] == Tile.CmdItem) { CmdItem_Leftovers++; }
                                 if (grid[n] == Tile.Mul2) { Mul_Leftovers++; }
                                 if (grid[n] == Tile.Mul3) { Mul_Leftovers++; }
@@ -394,19 +450,51 @@ public class TileAlgorithm_SCR : MonoBehaviour
                             break;
                         }
                     }
+                    //Replaces a tile with an CP +2 Tile if there are more than 2 tiles of this type in setup list
+                    while (CPPlus2_Leftovers > CPPlus2_MAX)
+                    {
+                        for (int n = 0; n < 16; n++)
+                        {
+                            if (grid[n] == Tile.MulATKPlus1 || grid[n] == Tile.MulATKPlus2 || grid[n] == Tile.Guard || grid[n] == Tile.HPPlus5 || grid[n] == Tile.CPPlus1 || grid[n] == Tile.CmdItem || grid[n] == Tile.Mul2 || grid[n] == Tile.Mul3 || grid[n] == Tile.ElementSwap)
+                            {
+                                Tile replacementTile = gridTiles[gridTiles.IndexOf(Tile.CPPlus2)];
+
+                                if (grid[n] == Tile.MulATKPlus1) { MulATKPlus1_Leftovers++; }
+                                if (grid[n] == Tile.MulATKPlus2) { MulATKPlus2_Leftovers++; }
+                                if (grid[n] == Tile.Guard) { Guard_Leftovers++; }
+                                if (grid[n] == Tile.HPPlus5) { HPPlus5_Leftovers++; }
+                                if (grid[n] == Tile.CPPlus1) { CPPlus1_Leftovers++; }
+                                if (grid[n] == Tile.CmdItem) { CmdItem_Leftovers++; }
+                                if (grid[n] == Tile.Mul2) { Mul_Leftovers++; }
+                                if (grid[n] == Tile.Mul3) { Mul_Leftovers++; }
+                                if (grid[n] == Tile.ElementSwap) { ElementSwap_Leftovers++; }
+
+                                grid.Add(replacementTile);
+                                gridTiles.Add(grid[n]);
+                                grid.RemoveAt(n);
+                                gridTiles.RemoveAt(gridTiles.IndexOf(Tile.CPPlus2));
+                                CPPlus2_Leftovers--;
+                            }
+                            else { continue; }
+
+                            break;
+                        }
+                    }
                     //Replaces a tile with an Command Tile if there are more than 1 tile of this type in setup list
                     while (CmdItem_Leftovers > CmdItem_MAX)
                     {
                         for (int n = 0; n < 16; n++)
                         {
-                            if (grid[n] == Tile.MulATKPlus1 || grid[n] == Tile.MulATKPlus2 || grid[n] == Tile.HPPlus5 || grid[n] == Tile.CPPlus1 || grid[n] == Tile.Mul2 || grid[n] == Tile.Mul3 || grid[n] == Tile.ElementSwap)
+                            if (grid[n] == Tile.MulATKPlus1 || grid[n] == Tile.MulATKPlus2 || grid[n] == Tile.Guard || grid[n] == Tile.HPPlus5 || grid[n] == Tile.CPPlus1 || grid[n] == Tile.CPPlus2 || grid[n] == Tile.Mul2 || grid[n] == Tile.Mul3 || grid[n] == Tile.ElementSwap)
                             {
                                 Tile replacementTile = gridTiles[gridTiles.IndexOf(Tile.CmdItem)];
 
                                 if (grid[n] == Tile.MulATKPlus1) { MulATKPlus1_Leftovers++; }
                                 if (grid[n] == Tile.MulATKPlus2) { MulATKPlus2_Leftovers++; }
+                                if (grid[n] == Tile.Guard) { Guard_Leftovers++; }
                                 if (grid[n] == Tile.HPPlus5) { HPPlus5_Leftovers++; }
                                 if (grid[n] == Tile.CPPlus1) { CPPlus1_Leftovers++; }
+                                if (grid[n] == Tile.CPPlus2) { CPPlus2_Leftovers++; }
                                 if (grid[n] == Tile.Mul2) { Mul_Leftovers++; }
                                 if (grid[n] == Tile.Mul3) { Mul_Leftovers++; }
                                 if (grid[n] == Tile.ElementSwap) { ElementSwap_Leftovers++; }
@@ -427,7 +515,7 @@ public class TileAlgorithm_SCR : MonoBehaviour
                     {
                         for (int n = 0; n < 16; n++)
                         {
-                            if (grid[n] == Tile.MulATKPlus1 || grid[n] == Tile.MulATKPlus2 || grid[n] == Tile.HPPlus5 || grid[n] == Tile.CPPlus1 || grid[n] == Tile.CmdItem || grid[n] == Tile.ElementSwap)
+                            if (grid[n] == Tile.MulATKPlus1 || grid[n] == Tile.MulATKPlus2 || grid[n] == Tile.Guard || grid[n] == Tile.HPPlus5 || grid[n] == Tile.CPPlus1 || grid[n] == Tile.CPPlus2 || grid[n] == Tile.CmdItem || grid[n] == Tile.ElementSwap)
                             {
                                 int searchIndex;
                                 if (gridTiles.IndexOf(Tile.Mul2) != -1) { searchIndex = gridTiles.IndexOf(Tile.Mul2); }
@@ -436,8 +524,10 @@ public class TileAlgorithm_SCR : MonoBehaviour
 
                                 if (grid[n] == Tile.MulATKPlus1) { MulATKPlus1_Leftovers++; }
                                 if (grid[n] == Tile.MulATKPlus2) { MulATKPlus2_Leftovers++; }
+                                if (grid[n] == Tile.Guard) { Guard_Leftovers++; }
                                 if (grid[n] == Tile.HPPlus5) { HPPlus5_Leftovers++; }
                                 if (grid[n] == Tile.CPPlus1) { CPPlus1_Leftovers++; }
+                                if (grid[n] == Tile.CPPlus2) { CPPlus2_Leftovers++; }
                                 if (grid[n] == Tile.CmdItem) { CmdItem_Leftovers++; }
                                 if (grid[n] == Tile.ElementSwap) { ElementSwap_Leftovers++; }
 
@@ -457,14 +547,16 @@ public class TileAlgorithm_SCR : MonoBehaviour
                     {
                         for (int n = 0; n < 16; n++)
                         {
-                            if (grid[n] == Tile.MulATKPlus1 || grid[n] == Tile.MulATKPlus2 || grid[n] == Tile.HPPlus5 || grid[n] == Tile.CPPlus1 || grid[n] == Tile.CmdItem || grid[n] == Tile.Mul2 || grid[n] == Tile.Mul3)
+                            if (grid[n] == Tile.MulATKPlus1 || grid[n] == Tile.MulATKPlus2 || grid[n] == Tile.Guard || grid[n] == Tile.HPPlus5 || grid[n] == Tile.CPPlus1 || grid[n] == Tile.CPPlus2 || grid[n] == Tile.CmdItem || grid[n] == Tile.Mul2 || grid[n] == Tile.Mul3)
                             {
                                 Tile replacementTile = gridTiles[gridTiles.IndexOf(Tile.ElementSwap)];
 
                                 if (grid[n] == Tile.MulATKPlus1) { MulATKPlus1_Leftovers++; }
                                 if (grid[n] == Tile.MulATKPlus2) { MulATKPlus2_Leftovers++; }
+                                if (grid[n] == Tile.Guard) { Guard_Leftovers++; }
                                 if (grid[n] == Tile.HPPlus5) { HPPlus5_Leftovers++; }
                                 if (grid[n] == Tile.CPPlus1) { CPPlus1_Leftovers++; }
+                                if (grid[n] == Tile.CPPlus2) { CPPlus2_Leftovers++; }
                                 if (grid[n] == Tile.CmdItem) { CmdItem_Leftovers++; }
                                 if (grid[n] == Tile.Mul2) { Mul_Leftovers++; }
                                 if (grid[n] == Tile.Mul3) { Mul_Leftovers++; }
@@ -482,8 +574,8 @@ public class TileAlgorithm_SCR : MonoBehaviour
                     }
                 }
                 while (ATKPlus1_Leftovers > ATKPlus1_MAX || ATKPlus2_Leftovers > ATKPlus2_MAX || ATKPlus3_Leftovers > ATKPlus3_MAX || ATKPlus4_Leftovers > ATKPlus4_MAX
-                        || MulATKPlus1_Leftovers > MulATKPlus1_MAX || MulATKPlus2_Leftovers > MulATKPlus2_MAX || HPPlus5_Leftovers > HPPlus5_MAX || CPPlus1_Leftovers > CPPlus1_MAX
-                        || CmdItem_Leftovers > CmdItem_MAX || Mul_Leftovers > Mul_MAX || ElementSwap_Leftovers > ElementSwap_MAX);
+                        || MulATKPlus1_Leftovers > MulATKPlus1_MAX || MulATKPlus2_Leftovers > MulATKPlus2_MAX || Guard_Leftovers > Guard_MAX || HPPlus5_Leftovers > HPPlus5_MAX
+                        || CPPlus1_Leftovers > CPPlus1_MAX || CPPlus2_Leftovers > CPPlus2_MAX || CmdItem_Leftovers > CmdItem_MAX || Mul_Leftovers > Mul_MAX || ElementSwap_Leftovers > ElementSwap_MAX);
             }
 
             ShuffleTilesInGrid(ref grid);
@@ -509,8 +601,10 @@ public class TileAlgorithm_SCR : MonoBehaviour
         ATKPlus4_Count = 0;
         MulATKPlus1_Count = 0;
         MulATKPlus2_Count = 0;
+        Guard_Count = 0;
         HPPlus5_Count = 0;
         CPPlus1_Count = 0;
+        CPPlus2_Count = 0;
         CmdItem_Count = 0;
         Mul_Count = 0;
         ElementSwap_Count = 0;
@@ -519,8 +613,8 @@ public class TileAlgorithm_SCR : MonoBehaviour
     //Check if the tile being inserted violated the algorithmic rule
     private bool CheckViolatedRule(ref int count, ref int typeCount, int max, bool isPlusTile)
     {
-        //Ensures that for each individual grid, there are only 13 Attack Plus Tiles and 3 other tiles
-        int typeCountMax = (isPlusTile ? 11 : 5);
+        //Ensures that for each individual grid, there are only 9 Attack Plus Tiles and 7 other tiles
+        int typeCountMax = (isPlusTile ? 9 : 7);
         if (count < max && typeCount < typeCountMax) { count++; typeCount++; return false; }
         return true;
     }

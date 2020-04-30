@@ -1,10 +1,12 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Rewired;
 using UnityEngine.SceneManagement;
 using EaseFunctions;
 using TMPro;
+using System.IO;
 
 public class GameManager_SCR : MonoBehaviour
 {
@@ -37,6 +39,7 @@ public class GameManager_SCR : MonoBehaviour
         MenuToVersus,
         BackToMainMenu,
         Popup,
+        DemoBattleToArcade,
         DemoBattleToMainMenu,
         ShowTutorial
     }
@@ -83,7 +86,7 @@ public class GameManager_SCR : MonoBehaviour
     private GameObject CopyrightInfo;
 
     //Main Menu GameObjects
-    private GameObject[] MenuButton = new GameObject[4];
+    private GameObject[] MenuButton = new GameObject[2];
     private GameObject Selection;
     private GameObject[] SelectTick = new GameObject[4];
     private GameObject SelectArrow;
@@ -97,14 +100,15 @@ public class GameManager_SCR : MonoBehaviour
     private GameObject[] techBorder = new GameObject[2];
     private GameObject ReadyToPlayText;
     private AudioSource AudioSrc_BGM;
+    private static AudioSource[] SoundFX;
     private AudioClip BGM;
 
     //Menu variables
     private bool canMenuSelect = false;
     private bool canPopupSelect = false;
     private bool canInstrSelect = false;
-    private GameObject[] InstrPanels = new GameObject[13];
-    private GameObject[] panelNodes = new GameObject[13];
+    private GameObject[] InstrPanels = new GameObject[14];
+    private GameObject[] panelNodes = new GameObject[14];
     private GameObject[] panelArrows = new GameObject[2];
     private int panelNum = 0;
     private Vector3 currentSelectPosition = new Vector3(0f, 0f, 0f);
@@ -121,17 +125,23 @@ public class GameManager_SCR : MonoBehaviour
     private Player systemPlayer;
     private bool allPlayersReady = false;
     private ScreenType ST = ScreenType.Windowed;
+    private bool allowLoadingStats = false;
+    private const string newLine = "#SAVESTAT#";
 
     //Arcade Menu variables
     private Theme worldTheme = Theme.Jungle;
     private int levelNum = 1;
     private GameObject WorldTag;
     private GameObject LevelLine;
-    private GameObject[] LevelNodes = new GameObject[3];
+    private GameObject[] LevelNodes = new GameObject[2];
     private GameObject[] LevelTiles = new GameObject[3];
 
     private void Awake()
     {
+        int SFX_Count = GameObject.FindGameObjectsWithTag("SFX").Length;
+        SoundFX = new AudioSource[SFX_Count];
+        for (int i = 0; i < SFX_Count; i++) { SoundFX[i] = this.gameObject.transform.GetChild(i).gameObject.GetComponent<AudioSource>(); }
+
         AudioSrc_BGM = this.gameObject.GetComponent<AudioSource>();
         BGM = Resources.Load<AudioClip>("Audio/BackgroundMusic/Menu_BGM");
         AudioSrc_BGM.clip = BGM;
@@ -205,6 +215,15 @@ public class GameManager_SCR : MonoBehaviour
         DisplayDescription();
         LevelManagement();
 
+    }
+
+    public void LoadWorldInfo()
+    {
+        string saveString = File.ReadAllText(Application.dataPath + "/Player_Stats.txt");
+        string[] contents = saveString.Split(new[] { newLine }, System.StringSplitOptions.None);
+
+        worldTheme = (Theme)(int.Parse(contents[0]) - 1);
+        levelNum = int.Parse(contents[1]);
     }
 
     public void StartTimeline(TimelineScript tls, float time = 1f, int animationIndex = 0)
@@ -357,7 +376,7 @@ public class GameManager_SCR : MonoBehaviour
                         Bits_PS.GetComponent<ParticleSystem>().Play();
 
                         ChangeBGM("Audio/BackgroundMusic/Menu_BGM");
-                        StartCoroutine(AudioFade_SCR.Fade(AudioSrc_BGM, 1f, 1f));
+                        StartCoroutine(AudioFade_SCR.Fade(AudioSrc_BGM, 0.85f, 1f));
 
                         timeVal = 2f;
                         break;
@@ -417,9 +436,9 @@ public class GameManager_SCR : MonoBehaviour
                         }
                         for (int i = 0; i < MenuButton.Length; i++)
                         {
+                            int index = (i == 0 ? 0 : 3);
                             MenuButton[i] = OtherFunctions.CreateObjectFromResource("Prefabs/MenuButton_PFB", new Vector3(-320f, 832f - (i * 144f), 0f));
-                            MenuButton[i].GetComponent<MenuButton_SCR>().ChangeSprite("Sprites/MenuButtons", i);
-                            if (i == 1 || i == 2) { MenuButton[i].GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 0.5f); }
+                            MenuButton[i].GetComponent<MenuButton_SCR>().ChangeSprite("Sprites/MenuButtons", index);
                             StartCoroutine(EasingFunctions.TranslateTo(MenuButton[i], new Vector2(MB_StartPosition, MenuButton[i].transform.position.y), 0.5f, 3, Easing.EaseOut));
                             yield return new WaitForSeconds(0.1f);
                         }
@@ -486,15 +505,27 @@ public class GameManager_SCR : MonoBehaviour
             {
                 case 1:
                     {
+                        try
+                        {
+                            LoadWorldInfo();
+                        }
+                        catch (Exception e) { Debug.LogError(e.Message); }
                         SceneManager.LoadScene("Resources/Scenes/ArcadeMenu_SCN");
                         timeVal = 1f;
                         break;
                     }
                 case 2:
                     {
+                        if (worldTheme == Theme.Casino)
+                        {
+                            LevelTiles[0].transform.position = new Vector3(720f, 540f, -49f);
+                            LevelTiles[1].transform.position = new Vector3(1200f, 540f, -49f);
+                            LevelLine.transform.localScale = new Vector3(480f, 16f, 1f);
+                            Destroy(LevelTiles[2]);
+                        }
                         if (GameObject.Find("TrailBit Emitter")) { Destroy(GameObject.Find("TrailBit Emitter")); }
                         StartCoroutine(EasingFunctions.ColorChangeFromHex(TopOverlay, "#000000", 0.5f, 0f));
-                        CreateSelection(LevelTiles[0], 208f, 226f, new Color(1f, 1f, 1f, 1f), 1.5f);
+                        CreateSelection(LevelTiles[levelNum - 1], 208f, 226f, new Color(1f, 1f, 1f, 1f), 1.5f);
                         StartTimeline(TimelineScript.GoToBattleScreen, 3f);
                         break;
                     }
@@ -521,8 +552,26 @@ public class GameManager_SCR : MonoBehaviour
                     }
                 case 3:
                     {
-                        ChangeBGM("Audio/BackgroundMusic/Jungle1_BGM");
-                        StartCoroutine(AudioFade_SCR.Fade(AudioSrc_BGM, 1f, 1f));
+                        if (worldTheme == Theme.Jungle)
+                        {
+                            switch (levelNum)
+                            {
+                                case 1: { ChangeBGM("Audio/BackgroundMusic/Jungle1_BGM"); break; }
+                                case 2: { ChangeBGM("Audio/BackgroundMusic/Jungle2_BGM"); break; }
+                                case 3: { ChangeBGM("Audio/BackgroundMusic/Jungle3_BGM"); break; }
+                            }
+                        }
+                        else if (worldTheme == Theme.Casino)
+                        {
+                            switch (levelNum)
+                            {
+                                case 1: { ChangeBGM("Audio/BackgroundMusic/Casino1_BGM"); break; }
+                                case 2: { ChangeBGM("Audio/BackgroundMusic/Casino2_BGM"); break; }
+                            }
+                        }
+                        else if (worldTheme == Theme.Internet) { ChangeBGM("Audio/BackgroundMusic/Internet1_BGM"); }
+
+                        StartCoroutine(AudioFade_SCR.Fade(AudioSrc_BGM, 0.5f, 1f));
 
                         Destroy(Bits_PS);
                         Destroy(Square_PS);
@@ -544,6 +593,7 @@ public class GameManager_SCR : MonoBehaviour
                 case 1:
                     {
                         StartCoroutine(EasingFunctions.ColorChangeFromHex(ReadyBar, "#000000", 0.25f, 1f));
+                        GameManager_SCR.PlaySound(42);
                         StartCoroutine(EasingFunctions.TranslateTo(techBorder[0], new Vector3(0f, 668f), 0.25f, 3, Easing.EaseOut));
                         StartCoroutine(EasingFunctions.TranslateTo(techBorder[1], new Vector3(1920f, 412f), 0.25f, 3, Easing.EaseOut));
                         StartCoroutine(EasingFunctions.TranslateTo(ReadyToPlayText, new Vector3(960f, 540f), 0.25f, 3, Easing.EaseOut));
@@ -553,11 +603,31 @@ public class GameManager_SCR : MonoBehaviour
                     }
                 case 2:
                     {
+                        GameManager_SCR.PlaySound(42);
                         StartCoroutine(EasingFunctions.ColorChangeFromHex(ReadyBar, "#000000", 0.25f, 0f));
                         StartCoroutine(EasingFunctions.TranslateTo(techBorder[0], new Vector3(0f, 1260f), 0.25f, 3, Easing.EaseOut));
                         StartCoroutine(EasingFunctions.TranslateTo(techBorder[1], new Vector3(1920f, -180f), 0.25f, 3, Easing.EaseOut));
                         StartCoroutine(EasingFunctions.TranslateTo(ReadyToPlayText, new Vector3(2700f, 540f), 0.25f, 3, Easing.EaseOut));
                         StartCoroutine(EasingFunctions.ColorChangeFromHex(DarkOverlay, "#000000", 0.25f, 0f));
+                        break;
+                    }
+            }
+        }
+        else if (timelinescript == TimelineScript.DemoBattleToArcade)
+        {
+            SS_Animation_index++;
+            switch (SS_Animation_index)
+            {
+                case 1:
+                    {
+                        StartCoroutine(AudioFade_SCR.Fade(AudioSrc_BGM, 0f, 2f));
+                        StartCoroutine(EasingFunctions.ColorChangeFromHex(TopOverlay, "#000000", 2f, 1f));
+                        timeVal = 3f;
+                        break;
+                    }
+                case 2:
+                    {
+                        StartTimeline(TimelineScript.MenuToArcade, 1f);
                         break;
                     }
             }
@@ -578,6 +648,8 @@ public class GameManager_SCR : MonoBehaviour
                     {
                         DarkOverlay.GetComponent<SpriteRenderer>().color = new Color(0f, 0f, 0f, 0f);
                         SceneManager.LoadScene("Resources/Scenes/TitleMenu_SCN");
+                        worldTheme = Theme.Jungle;
+                        levelNum = 1;
                         StartCoroutine(EasingFunctions.ColorChangeFromHex(TopOverlay, "#000000", 0.5f, 0f));
                         StartTimeline(TimelineScript.TitleScreenAnimation, 1f);
                         break;
@@ -755,8 +827,8 @@ public class GameManager_SCR : MonoBehaviour
                 }
             case MenuOption.Quit:
                 {
-                    float MB_YPosition = MenuButton[3].transform.position.y;
-                    ArrangeMenuAnimation(3);
+                    float MB_YPosition = MenuButton[1].transform.position.y;
+                    ArrangeMenuAnimation(1);
                     SelectArrow.transform.position = new Vector2(SelectArrow.transform.position.x, MB_YPosition);
                     break;
                 }
@@ -774,6 +846,7 @@ public class GameManager_SCR : MonoBehaviour
             {
                 if (systemPlayer.GetButtonDown("Confirm"))
                 {
+                    PlaySound(1);
                     Popup.GetComponent<Popup_SCR>().ConfirmChoice();
                     selectCooldownTime = 0.2f;
                     DisablePopupSelection();
@@ -783,6 +856,7 @@ public class GameManager_SCR : MonoBehaviour
                 }
                 else if ((systemPlayer.GetButton("SelectRight") || systemPlayer.GetButton("SelectLeft")) && CanMoveSelection())
                 {
+                    PlaySound(2);
                     selectCooldownTime = 0.2f;
                     Popup.GetComponent<Popup_SCR>().ToggleChoice();
                 }
@@ -792,6 +866,7 @@ public class GameManager_SCR : MonoBehaviour
         {
             if (systemPlayer.GetButton("SelectRight") && CanMoveSelection())
             {
+                PlaySound(2);
                 if (panelNum < InstrPanels.Length - 1)
                 {
                     selectCooldownTime = 0.55f;
@@ -808,6 +883,7 @@ public class GameManager_SCR : MonoBehaviour
             }
             else if (systemPlayer.GetButton("SelectLeft") && CanMoveSelection() && panelNum > 0)
             {
+                PlaySound(2);
                 selectCooldownTime = 0.55f;
                 StartCoroutine(EasingFunctions.TranslateTo(InstrPanels[panelNum--], new Vector3(3120f, 540f, -105f), 0.5f, 3, Easing.EaseOut));
                 StartCoroutine(EasingFunctions.TranslateTo(InstrPanels[panelNum], new Vector3(960f, 540f, -105f), 0.5f, 3, Easing.EaseOut));
@@ -817,6 +893,7 @@ public class GameManager_SCR : MonoBehaviour
         {
             if (systemPlayer.GetButtonDown("Confirm"))
             {
+                PlaySound(1);
                 selectCooldownTime = 0.2f;
 
                 switch (MB)
@@ -867,6 +944,7 @@ public class GameManager_SCR : MonoBehaviour
             }
             else if (systemPlayer.GetButton("SelectUp") && CanMoveSelection())
             {
+                PlaySound(2);
                 selectCooldownTime = 0.2f;
                 Selection.transform.parent = null;
 
@@ -875,12 +953,12 @@ public class GameManager_SCR : MonoBehaviour
                     case MenuOption.Arcade:
                         {
                             Vector2 SA_Position = SelectArrow.transform.position;
-                            float MB_YPosition = MenuButton[3].transform.position.y;
-                            Selection.transform.position = MenuButton[3].transform.position;
-                            Selection.transform.SetParent(MenuButton[3].transform);
+                            float MB_YPosition = MenuButton[1].transform.position.y;
+                            Selection.transform.position = MenuButton[1].transform.position;
+                            Selection.transform.SetParent(MenuButton[1].transform);
 
                             MB = MenuOption.Quit;
-                            ArrangeMenuAnimation(3);
+                            ArrangeMenuAnimation(1);
                             SelectArrow.transform.position = new Vector2(SA_Position.x, MB_YPosition);
                             //StartCoroutine(EasingFunctions.TranslateTo(SelectArrow, new Vector2(SA_Position.x, MB_YPosition), 0.5f, 3, Easing.EaseOut));
                             break;
@@ -914,12 +992,12 @@ public class GameManager_SCR : MonoBehaviour
                     case MenuOption.Quit:
                         {
                             Vector2 SA_Position = SelectArrow.transform.position;
-                            float MB_YPosition = MenuButton[2].transform.position.y;
-                            Selection.transform.position = MenuButton[2].transform.position;
-                            Selection.transform.SetParent(MenuButton[2].transform);
+                            float MB_YPosition = MenuButton[0].transform.position.y;
+                            Selection.transform.position = MenuButton[0].transform.position;
+                            Selection.transform.SetParent(MenuButton[0].transform);
 
-                            MB = MenuOption.Credits;
-                            ArrangeMenuAnimation(2);
+                            MB = MenuOption.Arcade;
+                            ArrangeMenuAnimation(0);
                             SelectArrow.transform.position = new Vector2(SA_Position.x, MB_YPosition);
                             //StartCoroutine(EasingFunctions.TranslateTo(SelectArrow, new Vector2(SA_Position.x, MB_YPosition), 0.5f, 3, Easing.EaseOut));
                             break;
@@ -928,6 +1006,7 @@ public class GameManager_SCR : MonoBehaviour
             }
             else if (systemPlayer.GetButton("SelectDown") && CanMoveSelection())
             {
+                PlaySound(2);
                 selectCooldownTime = 0.2f;
                 Selection.transform.parent = null;
 
@@ -940,7 +1019,7 @@ public class GameManager_SCR : MonoBehaviour
                             Selection.transform.position = MenuButton[1].transform.position;
                             Selection.transform.SetParent(MenuButton[1].transform);
 
-                            MB = MenuOption.Tutorial;
+                            MB = MenuOption.Quit;
                             ArrangeMenuAnimation(1);
                             SelectArrow.transform.position = new Vector2(SA_Position.x, MB_YPosition);
                             //StartCoroutine(EasingFunctions.TranslateTo(SelectArrow, new Vector2(SA_Position.x, MB_YPosition), 0.5f, 3, Easing.EaseOut));
@@ -989,6 +1068,9 @@ public class GameManager_SCR : MonoBehaviour
             }
         }
     }
+    public bool isLoadActivated() { return allowLoadingStats; }
+    public void ActivateLoad() { allowLoadingStats = true; }
+    public void DeactivateLoad() { allowLoadingStats = false; }
 
     public void ExitVersusLobby()
     {
@@ -1070,34 +1152,20 @@ public class GameManager_SCR : MonoBehaviour
                 themeColor = new Color(0f, 239f / 255f, 62f / 255f);
                 LevelNodes[0].GetComponent<SpriteRenderer>().color = themeColor;
                 LevelNodes[1].GetComponent<SpriteRenderer>().color = nullColor;
-                LevelNodes[2].GetComponent<SpriteRenderer>().color = nullColor;
                 LevelNodes[0].transform.localScale = new Vector3(32f, 32f, 1f);
                 LevelNodes[1].transform.localScale = new Vector3(16f, 16f, 1f);
-                LevelNodes[2].transform.localScale = new Vector3(16f, 16f, 1f);
             }
             else if (worldTheme == Theme.Casino)
             {
                 themeColor = new Color(187f / 255f, 0f, 40f / 255f);
                 LevelNodes[0].GetComponent<SpriteRenderer>().color = nullColor;
                 LevelNodes[1].GetComponent<SpriteRenderer>().color = themeColor;
-                LevelNodes[2].GetComponent<SpriteRenderer>().color = nullColor;
                 LevelNodes[0].transform.localScale = new Vector3(16f, 16f, 1f);
                 LevelNodes[1].transform.localScale = new Vector3(32f, 32f, 1f);
-                LevelNodes[2].transform.localScale = new Vector3(16f, 16f, 1f);
-            }
-            else if (worldTheme == Theme.Internet)
-            {
-                themeColor = new Color(0f, 162f / 255f, 1f);
-                LevelNodes[0].GetComponent<SpriteRenderer>().color = nullColor;
-                LevelNodes[1].GetComponent<SpriteRenderer>().color = nullColor;
-                LevelNodes[2].GetComponent<SpriteRenderer>().color = themeColor;
-                LevelNodes[0].transform.localScale = new Vector3(16f, 16f, 1f);
-                LevelNodes[1].transform.localScale = new Vector3(16f, 16f, 1f);
-                LevelNodes[2].transform.localScale = new Vector3(32f, 32f, 1f);
             }
             for (int i = 0; i < LevelTiles.Length; i++)
             {
-                OtherFunctions.ChangeSprite(LevelTiles[i], "Sprites/LevelNumberTiles", (worldNum * 3) + i);
+                if (LevelTiles[i] != null) { OtherFunctions.ChangeSprite(LevelTiles[i], "Sprites/LevelNumberTiles", (worldNum * 3) + i); }
             }
 
             OtherFunctions.ChangeSprite(WorldTag, "Sprites/WorldTags", worldNum);
@@ -1115,11 +1183,17 @@ public class GameManager_SCR : MonoBehaviour
     public void SetTutorialChoice(bool choice) { tutorialChoice = choice; }
     public void SetPenaltyChoice(bool choice) { penaltyChoice = choice; }
     public bool PenaltyTimerEnabled() { return penaltyTimerON; }
-    public void ChangeBGM(string Src)
+    public int GetWorldNumber() { return (int)worldTheme + 1; }
+    public int GetLevelNumber() { return levelNum; }
+    public static void PlaySound(int listenerNum) { SoundFX[listenerNum-1].Play(); }
+    public static void StopSound(int listenerNum) { SoundFX[listenerNum - 1].Stop(); }
+    public AudioSource GetAudioSrc() { return AudioSrc_BGM; }
+    public void ChangeBGM(string Src, bool loopMusic = true)
     {
         BGM = Resources.Load<AudioClip>(Src);
         AudioSrc_BGM.clip = BGM;
         AudioSrc_BGM.Play();
+        AudioSrc_BGM.loop = loopMusic;
     }
     void OnEnable()
     {
@@ -1142,12 +1216,12 @@ public class GameManager_SCR : MonoBehaviour
             case "TitleMenu_SCN":
                 {
                     for (int i = 0; i < techBorder.Length; i++) { techBorder[i] = GameObject.Find($"TechBorder{i + 1}"); }
-                    if (GameObject.Find("Grid Background")) { GridBkg = GameObject.Find("Grid Background"); DontDestroyOnLoad(GridBkg); }
-                    if (GameObject.Find("LOC Background")) { LOCBkg = GameObject.Find("LOC Background"); DontDestroyOnLoad(LOCBkg); }
-                    if (GameObject.Find("DarkBlueGradient")) { GradientBkg = GameObject.Find("DarkBlueGradient"); DontDestroyOnLoad(GradientBkg); }
-                    if (GameObject.Find("Square PS")) { Square_PS = GameObject.Find("Square PS"); DontDestroyOnLoad(Square_PS); }
+                    if (GameObject.Find("Grid Background")) { GridBkg = GameObject.Find("Grid Background"); }
+                    if (GameObject.Find("LOC Background")) { LOCBkg = GameObject.Find("LOC Background"); }
+                    if (GameObject.Find("DarkBlueGradient")) { GradientBkg = GameObject.Find("DarkBlueGradient"); }
+                    if (GameObject.Find("Square PS")) { Square_PS = GameObject.Find("Square PS"); }
                     if (GameObject.Find("AnyButtonText_PFB")) { AnyButton_Text = GameObject.Find("AnyButtonText_PFB"); }
-                    if (GameObject.Find("Bits PS")) { Bits_PS = GameObject.Find("Bits PS"); DontDestroyOnLoad(Bits_PS); }
+                    if (GameObject.Find("Bits PS")) { Bits_PS = GameObject.Find("Bits PS"); }
                     if (GameObject.Find("Slide Bar")) { SlideBar = GameObject.Find("Slide Bar"); }
                     if (GameObject.Find("CopyrightInfo")) { CopyrightInfo = GameObject.Find("CopyrightInfo"); }
                     if (GameObject.Find("Dark Overlay")) { DarkOverlay = GameObject.Find("Dark Overlay"); DontDestroyOnLoad(DarkOverlay); }

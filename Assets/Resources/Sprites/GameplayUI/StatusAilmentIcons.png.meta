@@ -14,6 +14,39 @@ TextureImporter:
   - first:
       213: 455011626196747728
     second: StatusAilmentIcons_3
+  - first:
+      213: 7298881481491116002
+    second: StatusAilmentIcons_4
+  - first:
+      213: -9176946203524620236
+    second: StatusAilmentIcons_5
+  - first:
+      213: -5200781978606244598
+    second: StatusAilmentIcons_6
+  - first:
+      213: -1529603298928719308
+    second: StatusAilmentIcons_7
+  - first:
+      213: -4611550352297284724
+    second: StatusAilmentIcons_8
+  - first:
+      213: -3753526549615267036
+    second: StatusAilmentIcons_9
+  - first:
+      213: -4180939895331557815
+    second: StatusAilmentIcons_10
+  - first:
+      213: -459164020503129568
+    second: StatusAilmentIcons_11
+  - first:
+      213: 1076895025368771866
+    second: StatusAilmentIcons_12
+  - first:
+      213: 1437263564013696807
+    second: StatusAilmentIcons_13
+  - first:
+      213: 3755780050468552330
+    second: StatusAilmentIcons_14
   externalObjects: {}
   serializedVersion: 10
   mipmaps:
@@ -102,7 +135,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 0
+        y: 104
         width: 86
         height: 52
       alignment: 0
@@ -123,7 +156,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 86
-        y: 0
+        y: 104
         width: 86
         height: 52
       alignment: 0
@@ -144,7 +177,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 172
-        y: 0
+        y: 104
         width: 86
         height: 52
       alignment: 0
@@ -165,7 +198,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 258
-        y: 0
+        y: 104
         width: 86
         height: 52
       alignment: 0
@@ -177,6 +210,237 @@ TextureImporter:
       bones: []
       spriteID: 0d5412cc9a6805600800000000000000
       internalID: 455011626196747728
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: StatusAilmentIcons_4
+      rect:
+        serializedVersion: 2
+        x: 344
+        y: 104
+        width: 86
+        height: 52
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2ef64f94906da4560800000000000000
+      internalID: 7298881481491116002
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: StatusAilmentIcons_5
+      rect:
+        serializedVersion: 2
+        x: 430
+        y: 104
+        width: 86
+        height: 52
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 430ab08ac00f4a080800000000000000
+      internalID: -9176946203524620236
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: StatusAilmentIcons_6
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 52
+        width: 86
+        height: 52
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a0debea685c13d7b0800000000000000
+      internalID: -5200781978606244598
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: StatusAilmentIcons_7
+      rect:
+        serializedVersion: 2
+        x: 86
+        y: 52
+        width: 86
+        height: 52
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 43a861067e1c5cae0800000000000000
+      internalID: -1529603298928719308
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: StatusAilmentIcons_8
+      rect:
+        serializedVersion: 2
+        x: 172
+        y: 52
+        width: 86
+        height: 52
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c8b2e7b336b7000c0800000000000000
+      internalID: -4611550352297284724
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: StatusAilmentIcons_9
+      rect:
+        serializedVersion: 2
+        x: 258
+        y: 52
+        width: 86
+        height: 52
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4233f2b7d7bc8ebc0800000000000000
+      internalID: -3753526549615267036
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: StatusAilmentIcons_10
+      rect:
+        serializedVersion: 2
+        x: 344
+        y: 52
+        width: 86
+        height: 52
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 94ee08711515af5c0800000000000000
+      internalID: -4180939895331557815
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: StatusAilmentIcons_11
+      rect:
+        serializedVersion: 2
+        x: 430
+        y: 52
+        width: 86
+        height: 52
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 022554091c8b0a9f0800000000000000
+      internalID: -459164020503129568
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: StatusAilmentIcons_12
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 86
+        height: 52
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a1dad77e156e1fe00800000000000000
+      internalID: 1076895025368771866
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: StatusAilmentIcons_13
+      rect:
+        serializedVersion: 2
+        x: 86
+        y: 0
+        width: 86
+        height: 52
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 727f5a5b89f22f310800000000000000
+      internalID: 1437263564013696807
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: StatusAilmentIcons_14
+      rect:
+        serializedVersion: 2
+        x: 172
+        y: 0
+        width: 86
+        height: 52
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a8e3da29e063f1430800000000000000
+      internalID: 3755780050468552330
       vertices: []
       indices: 
       edges: []

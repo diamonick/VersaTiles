@@ -17,13 +17,16 @@ public class AttackArrow_SCR : MonoBehaviour
     };
     private GameObject Obj;
     private GameObject EnemyTarget;
+    private GameObject BM;
     private int fullDamage = 0;
     private bool showLuckyText = false;
     private float timeVal = 0.5f;
     private readonly float timeValMax = 60f;
+    private bool time_running = true;
 
     private void Awake()
     {
+        BM = GameObject.Find("BattleManager");
         Obj = this.gameObject;
     }
 
@@ -41,15 +44,18 @@ public class AttackArrow_SCR : MonoBehaviour
             Vector3 dir = EnemyTarget.transform.position - Obj.transform.position;
             float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
             Obj.transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
-            if (timeVal > 0f) { timeVal -= 1f * Time.deltaTime; }
-            else
+            if (time_running)
             {
-                EnemyTarget.GetComponent<Enemy_SCR>().ReceiveDamage(fullDamage);
-                if (showLuckyText)
+                if (timeVal > 0f) { timeVal -= 1f * Time.deltaTime; }
+                else
                 {
-                    OtherFunctions.CreateObjectFromResource("Prefabs/LuckyText_PFB", Obj.transform.position);
+                    EnemyTarget.GetComponent<Enemy_SCR>().ReceiveDamage(fullDamage);
+                    if (showLuckyText)
+                    {
+                        OtherFunctions.CreateObjectFromResource("Prefabs/LuckyText_PFB", Obj.transform.position);
+                    }
+                    Destroy(Obj);
                 }
-                Destroy(Obj);
             }
         }
     }
@@ -66,6 +72,17 @@ public class AttackArrow_SCR : MonoBehaviour
         if (RandomChance(LUCK)) { luckyMultiplier = 2; showLuckyText = true; }
 
         fullDamage = damage * luckyMultiplier;
+    }
+    public IEnumerator BetrayPlayer()
+    {
+        time_running = false;
+        StartCoroutine(EasingFunctions.TranslateTo(Obj, EnemyTarget.transform.position, 0.5f, 3, Easing.EaseOut));
+        yield return new WaitForSeconds(0.5f);
+        EnemyTarget = BM.GetComponent<BattleManager_SCR>().GetPlayerBoard();
+        StartCoroutine(EasingFunctions.TranslateTo(Obj, EnemyTarget.transform.position + new Vector3(396f, -540f, -405f), 0.5f, 3, Easing.EaseIn));
+        yield return new WaitForSeconds(0.5f);
+        StartCoroutine(BM.GetComponent<BattleManager_SCR>().ReceiveDamage(fullDamage));
+        Destroy(Obj);
     }
     private bool RandomChance(int percentage) { return (Random.Range(0, 100) < percentage); }
 }

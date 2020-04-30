@@ -10,12 +10,23 @@ public class StatusAilmentIcon_SCR : MonoBehaviour
         ATK_Up = 0,
         DEF_Up,
         Sleep,
-        Lucky
+        Lucky,
+        Poisoned,
+        Confused,
+        Revenge,
+        Burned,
+        Paralyzed,
+        Frozen,
+        HP_Regen,
+        CP_Regen,
+        Stop,
+        TouchDamage
     }
     private GameObject Obj;
     private GameObject turnsLeft_Text;
     private int turnsLeft = 0;
     private StatusAilment SA = StatusAilment.ATK_Up;
+    private bool dontDeductTurn = false;
 
     private void Awake()
     {
@@ -40,10 +51,12 @@ public class StatusAilmentIcon_SCR : MonoBehaviour
     public int GetStatusAilment() { return (int)SA; }
     public void DecrementTurn()
     {
-        if (turnsLeft != -1)
+        if (dontDeductTurn) { dontDeductTurn = false; return; }
+        else if (turnsLeft != -1)
         {
             turnsLeft--;
             turnsLeft_Text.GetComponent<TMP_Text>().text = $"{turnsLeft}";
         }
     }
+    public void PreventDefault(bool _dontDeductTurn) { dontDeductTurn = _dontDeductTurn; }
 }

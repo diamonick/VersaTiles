@@ -48,7 +48,12 @@ MonoBehaviour:
   mainElement: 0
   HP: 0
   MaxHP: 0
+  ATK: 0
+  ATK_LevelNum: 0
   DEF: 0
+  DEF_LevelNum: 0
+  LUCK: 0
+  LUCK_LevelNum: 0
   EXP: 0
   turnsLeft: 0
 --- !u!212 &-8511160835135427303
@@ -69,7 +74,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

@@ -52,16 +52,16 @@ public class SelectedCmdChoice_SCR : MonoBehaviour
             if (selectTick[i] == null)
             {
                 Vector3 relPos = new Vector3(0f, 0f, 0f);
-                if (i == 0) { relPos = new Vector3((-width / 2f) - padding, (height / 2f) + padding, -2f); }        //Top-left corner
-                else if (i == 1) { relPos = new Vector3((width / 2f) + padding, (height / 2f) + padding, -2f); }    //Top-right corner
-                else if (i == 2) { relPos = new Vector3((-width / 2f) - padding, (-height / 2f) - padding, -2f); }  //Bottom-left corner
-                else if (i == 3) { relPos = new Vector3((width / 2f) + padding, (-height / 2f) - padding, -2f); }   //Bottom-right corner
+                if (i == 0) { relPos = new Vector3((-width / 2f) - padding, (height / 2f) + padding, -505f); }        //Top-left corner
+                else if (i == 1) { relPos = new Vector3((width / 2f) + padding, (height / 2f) + padding, -505f); }    //Top-right corner
+                else if (i == 2) { relPos = new Vector3((-width / 2f) - padding, (-height / 2f) - padding, -505f); }  //Bottom-left corner
+                else if (i == 3) { relPos = new Vector3((width / 2f) + padding, (-height / 2f) - padding, -505f); }   //Bottom-right corner
 
                 selectTick[i] = OtherFunctions.CreateObjectFromResource("Prefabs/SelectTick_PFB", pos + relPos);
                 selectTick[i].GetComponent<SelectTick_SCR>().SetTickBorder(i);
                 selectTick[i].transform.localScale = new Vector3(scale, scale, 1f);
                 selectTick[i].transform.SetParent(Obj.transform);
-                selectTick[i].GetComponent<SpriteRenderer>().sortingOrder = 1;
+                selectTick[i].GetComponent<SpriteRenderer>().sortingOrder = 2;
                 selectTick[i].GetComponent<SpriteRenderer>().color = col;
             }
         }

@@ -49,6 +49,7 @@ public class AnyButtonText_SCR : MonoBehaviour
         {
             if (ReInput.controllers.GetAnyButton() && !isConfirmed)
             {
+                GameManager_SCR.PlaySound(1);
                 blinkInterval = 0.02f; blinkRate = 25f;
                 Blinking = BlinkType.None;
                 blinkTime = blinkInterval;

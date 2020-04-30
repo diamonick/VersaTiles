@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using EaseFunctions;
 
 public class Playtile_SCR : MonoBehaviour
 {
@@ -12,12 +13,19 @@ public class Playtile_SCR : MonoBehaviour
         ATKPlus4,       // Attack +4
         MulATKPlus1,    // Multi-Attack +1
         MulATKPlus2,    // Multi-Attack +2
+        Guard,          // Guard
         HPPlus5,        // Heart Points +5
         CPPlus1,        // Command Points +1
+        CPPlus2,        // Command Points +2
         CmdItem,        // Command Item
         Mul2,           // x2
         Mul3,           // x3
-        ElementSwap    // Element Swap
+        ElementSwap,    // Element Swap
+        ATKPlus0 = 20,       // Attack +0
+        MulATKPlus0,    // Multi-Attack +0
+        CPPlus0,        // Command Points +0
+        HPPlus2,        // Heart Points +2
+        Mul1,           // x1
     };
 
     private GameObject Obj;
@@ -28,11 +36,15 @@ public class Playtile_SCR : MonoBehaviour
     [SerializeField] private int ID = 0;
     private int frameIndex = 0;
     private float grayVal = 0f;
+    private float vibration = 0f;
+    private Vector3 staticPos;
+    private bool isInfected = false;
 
     private void Awake()
     {
         Obj = this.gameObject;
         GreyscaleShader = Resources.Load<Shader>("Greyscale_SHD");
+        staticPos = Obj.transform.position;
     }
 
     // Start is called before the first frame update
@@ -50,6 +62,20 @@ public class Playtile_SCR : MonoBehaviour
             {
                 grayVal += 0.2f;
                 Obj.GetComponent<SpriteRenderer>().material.SetFloat("_EffectAmount", grayVal);
+            }
+        }
+        if (isInfected)
+        {
+            float randX = UnityEngine.Random.Range(-vibration, vibration);
+            float randY = UnityEngine.Random.Range(-vibration, vibration);
+            Obj.transform.position = staticPos + new Vector3(randX, randY, 0f);
+
+            if (vibration > 0f) { vibration -= 0.25f; }
+            else
+            {
+                vibration = 0;
+                isInfected = false;
+                Obj.transform.position = staticPos;
             }
         }
     }
@@ -72,6 +98,42 @@ public class Playtile_SCR : MonoBehaviour
     public Tile GetTileType() { return tileType; }
     public void SetTileType(Tile t) { tileType = t; }
     public int GetElementIndex() { return frameIndex; }
+    public IEnumerator InfectTile(Color infectedColor, int typeNum)
+    {
+        isInfected = true;
+        StartCoroutine(EasingFunctions.ColorChangeFromRGBA(Obj, infectedColor, 0.3f, Format.Scalar));
+        switch (typeNum)
+        {
+            //Attack +1 Tile
+            case 0: { AssignTileType(20); break; }
+            //Attack +2 Tile
+            case 1: { AssignTileType(0); break; }
+            //Attack +3 Tile
+            case 2: { AssignTileType(1); break; }
+            //Attack +4 Tile
+            case 3: { AssignTileType(2); break; }
+            //Multi-Attack +1 Tile
+            case 4: { AssignTileType(21); break; }
+            //Multi-Attack +2 Tile
+            case 5: { AssignTileType(4); break; }
+            //Heart Points +5 Tile
+            case 7: { AssignTileType(23); break; }
+            //Command Points +1 Tile
+            case 8: { AssignTileType(22); break; }
+            //Command Points +2 Tile
+            case 9: { AssignTileType(8); break; }
+            //x2 Tile
+            case 11: { AssignTileType(24); break; }
+        }
+        for (int i = 0; i < 10; i++)
+        {
+            vibration += 2;
+            yield return new WaitForEndOfFrame();
+        }
+        yield return new WaitForSeconds(1.2f);
+
+        StartCoroutine(EasingFunctions.ColorChangeFromRGBA(Obj, new Color(1f, 1f, 1f, 1f), 0.5f, Format.Scalar));
+    }
 
     public void AssignTileType(int typeNum, int frameNum = -1)
     {
@@ -120,48 +182,97 @@ public class Playtile_SCR : MonoBehaviour
                     OtherFunctions.ChangeSprite(Obj, Resource, 5);
                     break;
                 }
-            //Heart Points +5 Tile
+            //Guard Tile
             case 6:
                 {
+                    tileType = Tile.Guard;
+                    OtherFunctions.ChangeSprite(Obj, Resource, 6);
+                    break;
+                }
+            //Heart Points +5 Tile
+            case 7:
+                {
                     tileType = Tile.HPPlus5;
-                    OtherFunctions.ChangeSprite(Obj, Resource, 8);
+                    OtherFunctions.ChangeSprite(Obj, Resource, 7);
                     break;
                 }
             //Command Points +1 Tile
-            case 7:
+            case 8:
                 {
                     tileType = Tile.CPPlus1;
+                    OtherFunctions.ChangeSprite(Obj, Resource, 8);
+                    break;
+                }
+            //Command Points +2 Tile
+            case 9:
+                {
+                    tileType = Tile.CPPlus2;
                     OtherFunctions.ChangeSprite(Obj, Resource, 9);
                     break;
                 }
             //Command Tile
-            case 8:
+            case 10:
                 {
                     tileType = Tile.CmdItem;
                     OtherFunctions.ChangeSprite(Obj, Resource, 10);
                     break;
                 }
             //x2 Tile
-            case 9:
+            case 11:
                 {
                     tileType = Tile.Mul2;
                     OtherFunctions.ChangeSprite(Obj, Resource, 11);
                     break;
                 }
             //x3 Tile
-            case 10:
+            case 12:
                 {
                     tileType = Tile.Mul3;
                     OtherFunctions.ChangeSprite(Obj, Resource, 12);
                     break;
                 }
             //Element Swap Tile
-            case 11:
+            case 13:
                 {
                     tileType = Tile.ElementSwap;
                     if (frameNum == -1) { frameIndex = Random.Range(13, 20); }
                     else { frameIndex = frameNum; }
                     OtherFunctions.ChangeSprite(Obj, Resource, frameIndex);
+                    break;
+                }
+            //Attack +0 Tile
+            case 20:
+                {
+                    tileType = Tile.ATKPlus0;
+                    OtherFunctions.ChangeSprite(Obj, Resource, 20);
+                    break;
+                }
+            //Multi-Attack +0 Tile
+            case 21:
+                {
+                    tileType = Tile.MulATKPlus0;
+                    OtherFunctions.ChangeSprite(Obj, Resource, 21);
+                    break;
+                }
+            //Command Points +0 Tile
+            case 22:
+                {
+                    tileType = Tile.CPPlus0;
+                    OtherFunctions.ChangeSprite(Obj, Resource, 22);
+                    break;
+                }
+            //Heart Points +2 Tile
+            case 23:
+                {
+                    tileType = Tile.HPPlus2;
+                    OtherFunctions.ChangeSprite(Obj, Resource, 23);
+                    break;
+                }
+            //x1 Tile
+            case 24:
+                {
+                    tileType = Tile.Mul1;
+                    OtherFunctions.ChangeSprite(Obj, Resource, 24);
                     break;
                 }
         }
